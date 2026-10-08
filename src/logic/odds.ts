@@ -14,10 +14,10 @@ import type { BetType, Runner } from "../types/game";
 export const RTP_BY_TYPE: Record<BetType, number> = {
   PLACE: 0.85,
   WIN: 0.9,
-  QUINELLA: 0.95,
-  EXACTA: 1.0,
-  TRIO: 1.0,
-  TRIFECTA: 1.1,
+  QUINELLA: 1.2,
+  EXACTA: 1.8,
+  TRIO: 1.8,
+  TRIFECTA: 4.5,
 };
 
 const MIN_ODDS = 1.1;

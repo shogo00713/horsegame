@@ -224,9 +224,13 @@ describe("配当の設計(的中確率と払い戻し率)", () => {
   });
 });
 
-// 調子が分からない人が、どんな賭け方を選んでも「いつでも得」にならないことを見張る
+// 調子が分からない人の期待値が、設定した払い戻し率を超えて「想定外に得」にならないことを見張る
 describe("ハック対策: 調子が分からない人の期待値の上限", () => {
+  // 券種ごとの払い戻し率に、丸めなどの誤差ぶん(20%)を足した値を上限にする。
+  // 払い戻し率が低い券種は、最低倍率(1.1倍)の影響があるので、下限として1.2を使う
   const MAX_BLIND_EV = 1.2;
+  const maxBlindEv = (betType: BetType) =>
+    Math.max(MAX_BLIND_EV, RTP_BY_TYPE[betType] * 1.2);
 
   // n頭の組み合わせ(順不同)・順列をすべて作る
   function combinations(items: Runner[], n: number): Runner[][] {
@@ -261,7 +265,7 @@ describe("ハック対策: 調子が分からない人の期待値の上限", ()
         betType === "WIN"
           ? selected[0].odds
           : payoutMultiplier(betType, selected, field);
-      expect(p * multiplier).toBeLessThan(MAX_BLIND_EV);
+      expect(p * multiplier).toBeLessThan(maxBlindEv(betType));
     }
   });
 });
