@@ -1,84 +1,96 @@
 /**
- * 馬の「調子」のロジック
+ * 馬の「調子」を決定・遷移させる関数たち
  *
- * 調子は画面には出さない隠しパラメータ。レースごとに、隣り合う調子の馬どうしが
- * 入れ替わる形でゆっくり遷移する(オートマトン)。各調子の頭数は変わらない。
- * 数レース続くので、連続した過去の着順から「最近調子が良さそう」と推測できる。
+ * 調子とは画面には出さない隠しパラメータ
+ * 各レースごとに、隣り合う調子の馬どうしが入れ替わる形でゆっくり遷移する
+ * 同じ調子は数レース続くことが多いので、連続した過去の着順から「最近調子が良さそう」と推測できる
  *
- * 調子は5段階(0: 絶不調 〜 4: 絶好調)。2が普通。
+ * 調子は5段階 (0: 絶不調 〜 4: 絶好調)
  */
 
 import type { Runner } from "../types/game";
 
+// 馬の調子の種類・段階数・デフォルト値
 export type Condition = 0 | 1 | 2 | 3 | 4;
+export const CONDITION_LEVELS = 5;
+export const NORMAL_CONDITION: Condition = 2; // デフォルトは2
 
-export const CONDITION_LEVELS = 5; // 0〜4の5段階
-export const NORMAL_CONDITION: Condition = 2; // デフォルトは普通(2)
+// 調子の割合、絶不調1・不調1・普通3・好調2・絶好調1
+export const DECK_RATIO = [1, 1, 3, 2, 1];
 
-// 表示名(デバッグ表示用)
-export const CONDITION_LABELS = ["絶不調", "不調", "普通", "好調", "絶好調"];
+// 隣り合う調子の入れ替わりやすさ(1レースあたり)
+// 添字は下側の調子: [絶不調↔不調 20%, 不調↔普通 30%, 普通↔好調 30%, 好調↔絶好調 20%]
+export const SWAP_PROBABILITY = [0.2, 0.3, 0.3, 0.2];
 
-// 調子の割合(8頭あたりの枚数)。絶不調1・不調1・普通3・好調2・絶好調1
-const DECK_RATIO_PER_8 = [1, 1, 3, 2, 1];
-
-/**
- * 1レースごとに配られる調子の内訳(馬の数と同じ枚数)を、良い順に並べて返す
- *
- * 普通以外は割合どおりに四捨五入し、残りを普通にする
- */
-export function conditionDeck(horseCount: number): Condition[] {
-  const counts = DECK_RATIO_PER_8.map((c) => Math.round((horseCount * c) / 8));
-  const others = counts[0] + counts[1] + counts[3] + counts[4];
-  counts[2] = Math.max(0, horseCount - others);
-
-  const deck: Condition[] = [];
-  for (let level = 4; level >= 0; level--) {
-    for (let i = 0; i < counts[level]; i++) deck.push(level as Condition);
-  }
-  return deck;
-}
+// 調子による強さの倍率
+// 絶不調0.05倍・不調0.2倍・普通1倍・好調5倍・絶好調8倍
+export const MULTIPLIERS = [0.05, 0.2, 1, 5, 8];
+export const MIN_WEIGHT = 1e-6; // 絶不調でも重みは正のままにするための最小値
 
 // 全馬ぶんの調子を、馬のIDごとにまとめた形
 export type Conditions = Record<string, Condition>;
 
-// 隣り合う調子の入れ替わりやすさ(1レースあたり)
-// 添字は下側の調子: [絶不調↔不調 20%, 不調↔普通 30%, 普通↔好調 30%, 好調↔絶好調 20%]
-// 上側の調子の馬1頭ごとに、この確率で下側の馬と入れ替わる
-export const SWAP_PROBABILITY = [0.2, 0.3, 0.3, 0.2];
+// 表示名(デバッグ表示用)
+export const CONDITION_LABELS = ["絶不調", "不調", "普通", "好調", "絶好調"];
 
-/** 全馬にランダムに調子を配る(最初のレース用) */
+/**
+ * 調子の割合から、良い順に調子を並べた配列(デッキ)をつくる関数
+ *
+ * 今のそのままなら、 [4,3,3,2,2,1,1,0] のような配列になる
+ *
+ * @param counts 調子ごとの頭数
+ * @returns 調子の配列(良い順)
+ */
+export function buildDeck(counts: number[]): Condition[] {
+  const deck: Condition[] = [];
+  for (let level = counts.length - 1; level >= 0; level--) {
+    for (let i = 0; i < counts[level]; i++) {
+      deck.push(level as Condition);
+    }
+  }
+  return deck;
+}
+
+/**
+ * 最初のレースの前に、ランダムに調子を配る関数
+ *
+ * @param runners
+ * @param random 固定の乱数
+ * @returns <馬ID, 調子> の形のオブジェクト
+ */
 function dealRandomConditions(
   runners: Runner[],
   random: () => number,
 ): Conditions {
-  const deck = conditionDeck(runners.length);
+  // 調子のデッキを作る(先頭から良い順になっている)
+  const deck = buildDeck(DECK_RATIO);
 
-  // Fisher-Yates
+  // Fisher–Yates シャッフル
   for (let i = deck.length - 1; i > 0; i--) {
     const j = Math.floor(random() * (i + 1));
     [deck[i], deck[j]] = [deck[j], deck[i]];
   }
 
-  return Object.fromEntries(
-    runners.map((r, i) => [r.id, deck[i] ?? NORMAL_CONDITION]),
-  );
+  return Object.fromEntries(runners.map((r, i) => [r.id, deck[i]]));
 }
 
 /**
- * 全馬の調子を決める
+ * 全馬の調子を決める総合関数
  *
- * previous が無ければ、内訳(conditionDeck)をシャッフルして配る。
+ * 初回はランダムに調子を配る
+ * 2回目以降は、前のレースの調子から「入れ替え」で次の調子にする
  *
- * previous があれば、前のレースの調子から「入れ替え」で次の調子にする。
- * 上側の調子の馬それぞれが SWAP_PROBABILITY の確率で、1つ下の調子の馬と入れ替わる
- * (好調 ↔ 絶好調 は20%、普通 ↔ 好調 は30%、…)。
- * 入れ替えなので各調子の頭数は変わらず、1頭が1レースで動くのは最大1段階。
+ * @param runners 馬の配列
+ * @param previous 前のレースの調子 (初回は undefined)
+ * @param random 固定の乱数
+ * @returns <馬ID, 調子> の形のオブジェクト
  */
 export function dealConditions(
   runners: Runner[],
   previous?: Conditions,
   random: () => number = Math.random,
 ): Conditions {
+  // 初回はランダムに配る
   if (!previous) return dealRandomConditions(runners, random);
 
   const next: Conditions = { ...previous };
@@ -110,7 +122,31 @@ export function dealConditions(
   return next;
 }
 
-// 保存データなどが正しい形か(全馬ぶん、0〜4の整数)
+/**
+ * 調子を掛けて、各レースの馬の強さを決定する関数
+ *
+ * 基本の強さ × 調子の倍率 で、着順を決めるときの重みになる
+ *
+ * @param baseWeight 基本の強さ
+ * @param condition 調子
+ * @returns 今回のレースの強さ(重み)
+ */
+export function applyCondition(
+  baseWeight: number,
+  condition: Condition,
+): number {
+  return Math.max(MIN_WEIGHT, baseWeight * MULTIPLIERS[condition]);
+}
+
+/**
+ * 与えられた調子が、正しい調子の形式をしているかを判定する関数
+ *
+ * 調子は、localStorage から復元するので、外部から与えられた値が正しいかを別途判定する必要がある
+ *
+ * @param value 調子の形式をしているはずのもの
+ * @param runners 馬のデータ
+ * @returns boolean (正しい形式ならtrue)
+ */
 export function isValidConditions(
   value: unknown,
   runners: Runner[],
@@ -126,17 +162,4 @@ export function isValidConditions(
       c < CONDITION_LEVELS
     );
   });
-}
-
-// 調子ごとの重みへの効き方(掛け算の倍率)
-// 倍率が大きいほど、調子が結果を左右する。絶好調は上位に来やすく、絶不調はほぼ来ない
-const MULTIPLIERS = [0.05, 0.2, 1, 5, 8];
-const MIN_WEIGHT = 1e-6;
-
-/** 基本の重みに調子の倍率を掛ける */
-export function applyCondition(
-  baseWeight: number,
-  condition: Condition,
-): number {
-  return Math.max(MIN_WEIGHT, baseWeight * MULTIPLIERS[condition]);
 }

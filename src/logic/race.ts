@@ -1,8 +1,8 @@
 /**
- * レースの進行ロジック
+ * レースの順位確定関数たち
  *
- * レースでは、各馬のオッズに基づいて着順を決定する
- *
+ * 各レースでは、各馬の強さに基づいて着順を決定する
+ * 強さをベースに1頭ずつピックする方式で馬が選ばれる
  */
 
 import { Runner } from "../types/game";
@@ -47,7 +47,7 @@ export function pickWinnerByOdds(
  * conditions を省略した場合は全馬「普通」として扱う
  *
  * @param runners
- * @param conditions 馬のIDごとの調子
+ * @param conditions 馬のIDと調子
  * @returns
  */
 export function makeFinishOrder(

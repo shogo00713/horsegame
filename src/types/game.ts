@@ -44,3 +44,12 @@ export interface Runner {
   description?: string; // 出走馬一覧に出す一言紹介
   strength?: number; // 着順を決めるときの基本の強さ(省略時は 1/odds)
 }
+
+// 馬の成績の集計
+export type HorseStats = {
+  runner: Runner;
+  ranks: number[]; // 各レースでの着順(1-indexed)。新しいレースが先頭
+  average: number | null; // 平均着順 (出走がなければnull)
+  wins: number; // 1着の回数
+  top3: number; // 3着以内の回数
+};

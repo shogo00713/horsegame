@@ -1,6 +1,5 @@
 import { describe, it, expect } from "vitest";
 import {
-  conditionDeck,
   NORMAL_CONDITION,
   dealConditions,
   isValidConditions,
@@ -59,11 +58,6 @@ describe("dealConditions", () => {
       fresh += dealConditions(runners)[best.id];
     }
     expect(carried / trials).toBeGreaterThan(fresh / trials + 0.3);
-  });
-
-  it("馬が内訳より多い場合、余った1頭ぶんは普通が増える", () => {
-    const many = [...runners, { id: "extra", name: "追加", odds: 5 }];
-    expect(counts(dealConditions(many))).toEqual([1, 1, 4, 2, 1]);
   });
 });
 
@@ -219,25 +213,5 @@ describe("調子の効き(3着以内に入る確率)", () => {
     expect(rates[3]).toBeGreaterThan(0.5);
     expect(rates[3]).toBeLessThan(rates[4]);
     expect(rates[0]).toBeLessThan(0.05);
-  });
-});
-
-describe("conditionDeck", () => {
-  const count = (deck: Condition[]) => {
-    const result = [0, 0, 0, 0, 0];
-    deck.forEach((level) => result[level]++);
-    return result;
-  };
-
-  it("8頭なら 絶不調1・不調1・普通3・好調2・絶好調1", () => {
-    expect(count(conditionDeck(8))).toEqual([1, 1, 3, 2, 1]);
-  });
-
-  it("頭数と同じ枚数で、良い順に並んでいる", () => {
-    for (const n of [5, 8, 12]) {
-      const deck = conditionDeck(n);
-      expect(deck).toHaveLength(n);
-      expect(deck).toEqual([...deck].sort((a, b) => b - a));
-    }
   });
 });

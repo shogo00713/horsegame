@@ -1,28 +1,72 @@
 /**
- * 賞金計算ロジック
+ * 払い戻し額の計算関数たち
  *
- * 配当は、単勝は馬のオッズ、それ以外は的中確率から決める(odds.ts)。
- * どの券種も、調子が分からない人にとっての払い戻し率は同じ(RTP)になる
- * - 単勝: 1着のオッズ
- * - 複勝: 3着以内に入る確率
- * - 馬連: 1・2着の2頭(順不同)になる確率
- * - 馬単: 1・2着の2頭(順番どおり)になる確率
- * - 3連複: 1〜3着の3頭(順不同)になる確率
- * - 3連単: 1〜3着の3頭(順番どおり)になる確率
+ * 単勝は、そのまま馬のオッズで計算される
+ * それ以外の賭け方では、的中確率と払い戻し率から計算される
+ *
+ * 画面表示用の「最大払戻額」の計算と、実際の結果に基づく「払戻額」の計算を行う
+ *
+ * - 単勝: 1着を当てる
+ * - 複勝: 1〜3着のいずれかを当てる
+ * - 馬連: 1・2着の2頭を順不同で当てる
+ * - 馬単: 1・2着の2頭を順番どおりに当てる
+ * - 3連複: 1〜3着の3頭を順不同で当てる
+ * - 3連単: 1〜3着の3頭を順番どおりに当てる
  */
 
 import { BetSelection, Runner } from "../types/game";
 import { payoutMultiplier } from "./odds";
 
 /**
- * 配当計算アルゴリズム本体
+ * オッズの総合的な計算関数
  *
- * selection.betTypeに応じて、各ベットタイプの計算関数を呼び出す
+ * 単勝はそのまま計算済みのオッズを返す
+ * それ以外の賭け方では、的中確率と払い戻し率から計算される(odds.ts の payoutMultiplier)
  *
- * @param bet
- * @param selection
- * @param result
- * @returns
+ * @param selection 賭け方と選んだ馬
+ * @param field 出走馬全体
+ * @returns オッズ (小数)
+ */
+function calculateOdds(selection: BetSelection, field: Runner[]): number {
+  switch (selection.betType) {
+    case "WIN":
+      return selection.runner.odds;
+    case "PLACE":
+      return payoutMultiplier("PLACE", [selection.runner], field);
+    case "TRIO":
+    case "TRIFECTA":
+    case "QUINELLA":
+    case "EXACTA":
+      return payoutMultiplier(selection.betType, selection.runners, field);
+  }
+}
+
+/**
+ * 的中した場合の払戻額(最大払戻額)を計算する
+ *
+ * 実際の結果に基づくものではなく、あくまで画面表示用
+ *
+ * @param bet 賭け金
+ * @param selection 選択した賭け方と馬
+ * @param field 出走馬全員
+ */
+export function calculateMaxPayout(
+  bet: number,
+  selection: BetSelection,
+  field: Runner[],
+): number {
+  return Math.floor(calculateOdds(selection, field) * bet);
+}
+
+/**
+ * 総合的な配当計算関数
+ *
+ * 賭け方に応じて、各賭け方の計算関数を呼び出す
+ *
+ * @param bet 賭け金
+ * @param selection 選択した賭け方
+ * @param result 結果
+ * @returns 払戻額(整数)
  */
 export function calculatePayout(
   bet: number,
@@ -46,38 +90,13 @@ export function calculatePayout(
 }
 
 /**
- * 的中した場合の払戻額(最大払戻額)を計算する
+ * 選択した馬と結果の一致判定(順序の考慮あり)
  *
- * calculatePayoutと違い、着順を必要としない(的中/非的中の判定を行わない)。
- * ベット内容から「もし当たったらいくらになるか」だけを計算する
- *
- * @param field 出走馬全員(的中確率の計算に使う)
+ * @param selected 選択した馬(順序あり)
+ * @param result 結果
+ * @param count 一致判定したい頭数
+ * @returns 一致するかどうか
  */
-export function calculateMaxPayout(
-  bet: number,
-  selection: BetSelection,
-  field: Runner[],
-): number {
-  return Math.floor(calculateOdds(selection, field) * bet);
-}
-
-// 的中可否に関わらない、ベット内容そのもののオッズ倍率
-// 単勝は馬のオッズ、それ以外は的中確率から「払い戻し率 ÷ 的中確率」で決める
-function calculateOdds(selection: BetSelection, field: Runner[]): number {
-  switch (selection.betType) {
-    case "WIN":
-      return selection.runner.odds;
-    case "PLACE":
-      return payoutMultiplier("PLACE", [selection.runner], field);
-    case "TRIO":
-    case "TRIFECTA":
-    case "QUINELLA":
-    case "EXACTA":
-      return payoutMultiplier(selection.betType, selection.runners, field);
-  }
-}
-
-// 順序を考慮した一致判定
 function isSameOrder(
   selected: Runner[],
   result: Runner[],
@@ -88,7 +107,14 @@ function isSameOrder(
   return selectedIds.every((id, i) => id === resultIds[i]);
 }
 
-// 順序を考慮しない一致判定
+/**
+ * 順序を考慮しない一致判定
+ *
+ * @param selected 選択した馬(順序なし)
+ * @param result 結果
+ * @param count 一致判定したい頭数
+ * @returns 一致するかどうか
+ */
 function isSameCombination(
   selected: Runner[],
   result: Runner[],

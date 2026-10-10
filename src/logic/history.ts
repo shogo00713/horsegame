@@ -1,20 +1,21 @@
 /**
- * レース履歴から、馬別の成績を集計するロジック
+ * レース履歴から、馬別の成績を集計する関数
+ * 
+ * 純粋に各履歴として残しているレースから、馬ごとの成績を集計する
  */
 
-import type { RaceHistory, Runner } from "../types/game";
+import type { RaceHistory, Runner, HorseStats } from "../types/game";
 
 // 履歴として残すレース数の上限
 export const MAX_HISTORY = 20;
 
-export type HorseStats = {
-  runner: Runner;
-  ranks: number[]; // 各レースでの着順(1始まり)。新しいレースが先頭
-  average: number | null; // 平均着順(出走がなければnull)
-  wins: number; // 1着の回数
-  top3: number; // 3着以内の回数
-};
-
+/**
+ * レース履歴から、馬別の成績を集計する関数
+ * 
+ * @param history レースの履歴
+ * @param runners 各馬
+ * @returns 馬ごとの成績
+ */
 export function horseStats(
   history: RaceHistory[],
   runners: Runner[],

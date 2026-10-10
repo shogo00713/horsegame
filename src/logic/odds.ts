@@ -1,16 +1,21 @@
 /**
- * オッズと配当を、勝率・的中確率の「近似」から決めるロジック
+ * オッズを的中確率から決定する関数たち
  *
- * 調子で勝率が大きく変わるが、全パターンは数えない。
- * 固定の乱数で作った調子の配り方を何千通りか試して、その平均を取る。
- * 頭数が多くても軽く、調子が分からない人の期待値は、ほぼ払い戻し率に近くなる
+ * オッズは的中確率と払い戻し率から決定される
+ * 単勝のオッズは、オッズそのものとして広く活用される
+ * それ以外の賭け方のオッズは、必要となる時のみ計算される
  */
 
-import { conditionDeck, applyCondition, type Condition } from "./condition";
+import {
+  applyCondition,
+  DECK_RATIO,
+  NORMAL_CONDITION,
+  type Condition,
+} from "./condition";
 import type { BetType, Runner } from "../types/game";
 
 // 券種ごとの払い戻し率(調子が分からない人が、平均して戻る割合)
-// 1を超えてもよい。手堅い券種は低く、当たりにくい券種は高くして、券種ごとの個性を出す
+// 本来1以上はあまり設定しないが、面白さのために極めて高い値を入れている
 export const RTP_BY_TYPE: Record<BetType, number> = {
   PLACE: 0.85,
   WIN: 0.9,
@@ -20,72 +25,105 @@ export const RTP_BY_TYPE: Record<BetType, number> = {
   TRIFECTA: 4.5,
 };
 
+// 最低限のオッズ
 const MIN_ODDS = 1.1;
 
-// ----- 調子の配り方をサンプリングして、確率を求める -----
-// 調子の全パターンは多すぎて数えられないので、固定の乱数でランダムに作った
-// パターンの平均を取る(毎回同じ結果になる)
+/**
+ * 全ての調子のパターンを列挙した2次元配列を作成する関数
+ *
+ * 再帰処理により、[4,3,3,2,2,2,1,0] の配列とその並び替えを全部作成する
+ * 並び替えの種類は、全部で 8!/2!*3! = 3360 通り
+ *
+ * @param remaining まだ置いていない調子の枚数
+ * @returns 8 × 3360 の配列
+ */
+function enumeratePatterns(remaining: number[]): Condition[][] {
+  // 全部置き終わったら、「空の並び」を1つだけ返す
+  if (remaining.every((n) => n === 0)) return [[]];
 
-// 固定のシードから、毎回同じ並びの乱数を作る
-function seededRandom(seed: number): () => number {
-  let a = seed;
-  return () => {
-    a |= 0;
-    a = (a + 0x6d2b79f5) | 0;
-    let t = Math.imul(a ^ (a >>> 15), 1 | a);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
+  const result: Condition[][] = [];
+  for (let level = remaining.length - 1; level >= 0; level--) {
+    if (remaining[level] === 0) continue; // このレベルはもう残っていない
 
-// 調子の配り方を、ランダムに count 通り作る
-function samplePatterns(horseCount: number, count: number): Condition[][] {
-  const random = seededRandom(20240601);
-  const base = conditionDeck(horseCount);
-  return Array.from({ length: count }, () => {
-    const deck = [...base];
-    for (let i = deck.length - 1; i > 0; i--) {
-      const j = Math.floor(random() * (i + 1));
-      [deck[i], deck[j]] = [deck[j], deck[i]];
+    const next = [...remaining];
+    next[level]--; // 1枚置いた分を減らす
+
+    for (const sub of enumeratePatterns(next)) {
+      result.push([level as Condition, ...sub]);
     }
-    return deck;
-  });
+  }
+  return result;
 }
 
-// 1つの配り方での、各馬の重み
-function weightsFor(strengths: number[], pattern: Condition[]): number[] {
-  return strengths.map((s, i) => applyCondition(s, pattern[i] ?? 2));
+// すべての調子のパターンを列挙してキャッシュしておく
+const ALL_PATTERNS = enumeratePatterns(DECK_RATIO);
+
+/**
+ * ある調子のパターンに基づいて、各馬の強さを計算する関数
+ *
+ * 基本の強さと調子のパターンの配列から、各馬の強さを計算する
+ *
+ * @param strengths 基本の強さの配列
+ * @param pattern 調子の配列
+ * @returns 各馬のそのレースの強さの配列
+ */
+function weightsForOneRace(
+  strengths: number[],
+  pattern: Condition[],
+): number[] {
+  return strengths.map((s, i) =>
+    applyCondition(s, pattern[i] ?? NORMAL_CONDITION),
+  );
 }
 
-const WIN_SAMPLES = 20000;
-const COMBO_SAMPLES = 3000;
-
-/** 調子が分からない状態での、各馬の1着になる確率(サンプリングによる近似) */
+// --- 単勝用 ---
+/**
+ * 調子が分からない状態(均一に全パターンの期待値として)での、各馬の1着になる確率
+ *
+ * ALL_PATTERNS で全パターンを試す
+ *
+ * @param strengths 各馬の基本の強さ
+ * @returns 各馬の1着になる確率
+ */
 export function marginalWinProbabilities(strengths: number[]): number[] {
+  // 各馬の1着になる確率の合計を加算しておく
   const totals = new Array<number>(strengths.length).fill(0);
 
-  for (const pattern of samplePatterns(strengths.length, WIN_SAMPLES)) {
-    const w = weightsFor(strengths, pattern);
+  for (const pattern of ALL_PATTERNS) {
+    const w = weightsForOneRace(strengths, pattern);
     const sum = w.reduce((a, b) => a + b, 0);
     w.forEach((x, i) => (totals[i] += x / sum));
   }
-
-  return totals.map((t) => t / WIN_SAMPLES);
+  // パターン数で割って、各馬の1着になる確率を返す
+  return totals.map((t) => t / ALL_PATTERNS.length);
 }
 
 /**
- * 強さから、表示するオッズ(単勝の倍率)を決める
+ * 1位になる確率から、表示するオッズ(単勝の倍率)を決める
+ *
+ * 0.1刻みで丸めて、最低オッズは MIN_ODDS とする
  *
  * @param strengths 各馬の基本の強さ
- * @param rtp 払い戻し率(0.9なら、賭け金の平均90%が戻る)
+ * @param rtp 払い戻し率
+ * @returns 各馬の単勝のオッズ
  */
 export function deriveOdds(strengths: number[], rtp: number): number[] {
   return marginalWinProbabilities(strengths).map((p) =>
     Math.max(MIN_ODDS, Math.round((rtp / p) * 10) / 10),
   );
 }
+// --------------
 
-// 着順の確率(重み付きで1頭ずつ選ぶ方式)で、指定した順に上位を占める確率
+// --- 単勝以外用 ---
+/**
+ * その着順になる確率を計算する関数
+ *
+ * 調子を考慮済みの強さと着順を受け取って、それになる確率を返す
+ *
+ * @param weights 各馬の強さ
+ * @param order 想定する着順
+ * @returns その着順になる確率(小数)
+ */
 function orderedProbability(weights: number[], order: number[]): number {
   let remaining = weights.reduce((a, b) => a + b, 0);
   let p = 1;
@@ -96,7 +134,14 @@ function orderedProbability(weights: number[], order: number[]): number {
   return p;
 }
 
-// 配列の並べ方をすべて列挙する
+/**
+ * 配列の並べ方をすべて列挙する関数
+ *
+ * 順序を考慮しない賭け方では、この関数で全パターンを足すことによって、的中確率を計算する
+ *
+ * @param items 並べる要素
+ * @returns すべての並べ方の配列
+ */
 function permutations(items: number[]): number[][] {
   if (items.length <= 1) return [items];
   return items.flatMap((x, i) =>
@@ -107,15 +152,21 @@ function permutations(items: number[]): number[][] {
   );
 }
 
-// 計算結果のキャッシュ(画面の再描画のたびに計算し直さないため)
+// 計算結果のキャッシュ
+// key: 賭け方|選んだ馬のID|出走馬のIDと強さ, value: 的中確率
+// 重い計算なので、一度したのはもう一度やりたくない
 const hitProbabilityCache = new Map<string, number>();
 
 /**
- * 調子が分からない状態での、そのベットが的中する確率(近似)
+ * 調子が分からない状態での、そのベットが的中する確率
+ *
+ * 単勝以外のオッズ計算用
+ * ALL_PATTERNS で全パターンを試す
  *
  * @param betType 賭け方
  * @param selected 選んだ馬
  * @param field 出走馬全員
+ * @returns そのベットが的中する確率
  */
 export function hitProbability(
   betType: BetType,
@@ -123,6 +174,8 @@ export function hitProbability(
   field: Runner[],
 ): number {
   const strengthOf = (r: Runner) => r.strength ?? 1 / r.odds;
+
+  // 保存用のキーを先に作っておく
   const key = [
     betType,
     selected.map((r) => r.id).join(","),
@@ -131,11 +184,11 @@ export function hitProbability(
   const cached = hitProbabilityCache.get(key);
   if (cached !== undefined) return cached;
 
-  const strengths = field.map(strengthOf);
+  const strengths = field.map(strengthOf); // 各馬の基本の強さ
   const picked = selected.map((r) => field.findIndex((f) => f.id === r.id));
   const others = field.map((_, i) => i).filter((i) => !picked.includes(i));
 
-  // 1つの配り方での、的中確率
+  // 1つの配り方での、的中確率を計算する関数
   function probabilityFor(weights: number[]): number {
     switch (betType) {
       case "WIN":
@@ -144,6 +197,7 @@ export function hitProbability(
         return orderedProbability(weights, picked);
       case "QUINELLA":
       case "TRIO":
+        // 順序を考慮しないので、該当パターンの順列を足す
         return permutations(picked).reduce(
           (sum, order) => sum + orderedProbability(weights, order),
           0,
@@ -164,15 +218,16 @@ export function hitProbability(
   }
 
   let result: number;
+  // コーナーケース: 複勝で出走馬が3頭以下の場合、必ず的中する
   if (betType === "PLACE" && field.length <= 3) {
     result = 1;
   } else {
-    const patterns = samplePatterns(field.length, COMBO_SAMPLES);
     result =
-      patterns.reduce(
-        (sum, pattern) => sum + probabilityFor(weightsFor(strengths, pattern)),
+      ALL_PATTERNS.reduce(
+        (sum, pattern) =>
+          sum + probabilityFor(weightsForOneRace(strengths, pattern)),
         0,
-      ) / patterns.length;
+      ) / ALL_PATTERNS.length;
   }
 
   hitProbabilityCache.set(key, result);
@@ -180,10 +235,14 @@ export function hitProbability(
 }
 
 /**
- * 的中確率から決めた、そのベットの配当倍率(賭け金に対する倍率)
+ * 的中確率と払い戻し率から、オッズを決定する関数 (単勝以外)
  *
- * 券種ごとの払い戻し率になるように、「払い戻し率 ÷ 的中確率」とする(0.1刻み)。
- * 上限は設けない(当たりにくい組み合わせは、非常に高い配当になる)
+ * 「払い戻し率 ÷ 的中確率」でオッズを計算する (0.1刻み)
+ *
+ * @param betType 賭け方
+ * @param selected 選んだ馬
+ * @param field 出走馬全員
+ * @returns その賭け方のオッズ
  */
 export function payoutMultiplier(
   betType: BetType,

@@ -1,17 +1,33 @@
 /**
- * 賭け方ごとの選択馬数のルール
+ * 賭け方に応じて、判定が変わる部分をまとめた関数たち
  *
- * 賭け方ごとに選択できる馬の頭数が異なるので、それを正しく判定する関数を提供する
+ * 賭け方に応じて、選ぶ必要のある馬の頭数や、着順を当てる必要があるかどうかなどが変わる
+ * それらを賭け方を引数として判定する関数がまとめてある
  */
 
 import type { BetType, BetSelection, Runner, Phase, Bet } from "../types/game";
 
-// 所持金リセットボタンを押していいかどうか
+/**
+ * 所持金リセットボタンを押してもいいかどうかを判定する
+ *
+ * @param phase - 現在のフェーズがBETTING
+ * @param money - 現在の所持金が500円以下
+ * @returns boolean
+ */
 export function canResetMoney(phase: Phase, money: number): boolean {
   return phase === "BETTING" && money <= 500;
 }
 
-// 賭け方ごとに選択できる馬の頭数
+/**
+ * 賭け方ごとに選ぶ必要のある馬の頭数を返す
+ *
+ * WIN, PLACE: 1頭
+ * QUINELLA, EXACTA: 2頭
+ * TRIO, TRIFECTA: 3頭
+ *
+ * @param betType
+ * @returns 整数 (1~3)
+ */
 export function maxSelectable(betType: BetType): number {
   switch (betType) {
     case "WIN":
@@ -26,38 +42,28 @@ export function maxSelectable(betType: BetType): number {
   }
 }
 
-// 着順を当てる必要がある賭け方か
+/**
+ * 着順も当てる必要がある賭け方かどうかを判定する
+ *
+ * TRIFECTA, EXACTA のみ True
+ *
+ * @param betType
+ * @returns boolean
+ */
 export function isOrderedBetType(betType: BetType): boolean {
   return betType === "TRIFECTA" || betType === "EXACTA";
 }
 
-// 選んだ馬の表示用文字列。着順ありなら「1. A → 2. B」、なしなら「A / B」
-export function formatSelectedRunners(bet: Bet): string {
-  if (isOrderedBetType(bet.betType)) {
-    return bet.selectedRunners.map((r, i) => `${i + 1}. ${r.name}`).join(" → ");
-  }
-  return bet.selectedRunners.map((r) => r.name).join(" / ");
-}
-
-// 賭け方の日本語表示
-export function betTypeLabel(betType: BetType): string {
-  switch (betType) {
-    case "WIN":
-      return "単勝";
-    case "PLACE":
-      return "複勝";
-    case "TRIO":
-      return "3連複";
-    case "TRIFECTA":
-      return "3連単";
-    case "QUINELLA":
-      return "馬連";
-    case "EXACTA":
-      return "馬単";
-  }
-}
-
-// 正しいベットの形式をしているか (馬の数・金額が正しいか)
+/**
+ * 正しいベットの形式をしているかを総合的に判定する関数
+ *
+ * 次の2つの条件を満たしている場合に True
+ * - 選んだ馬の数が正しいか
+ * - 金額が1円以上か
+ *
+ * @param bet 賭け方とその金額
+ * @returns boolean
+ */
 export function isValidBet(bet: Bet): boolean {
   const amount = Number(bet.betstr);
   return (
@@ -65,24 +71,26 @@ export function isValidBet(bet: Bet): boolean {
   );
 }
 
-// ベット全件の合計金額
+/**
+ * ベット金額の合計を計算する関数
+ *
+ * @param bets 各賭けの配列
+ * @returns 整数
+ */
 export function totalBetAmount(bets: Bet[]): number {
   return bets.reduce((sum, bet) => sum + Number(bet.betstr), 0);
 }
 
-// 今のベット内容で「BETする」ボタンを押せるかどうか
-// - 1件以上ある
-// - 全件成立している(馬の数・金額が正しい)
-// - 合計金額が所持金を超えていない
-// 同じ組み合わせ(同じ馬・同じ賭け方)の重複登録は、意図的に禁止していない
-
 /**
- * ベットボタンを押していいかどうか
+ * ベットボタンを押していいかどうかを判定する関数
  *
- * ベットが1件以上 & 全てが正しいベットの形をしている & 合計金額が所持金を超えていない
+ * 次の条件を全て満たすことが必要
+ * * ベットが1件以上
+ * * 全てが正しいベットの形式(馬の数・金額が正しい)をしている
+ * * 合計金額が所持金を超えていない
  *
- * @param bets
- * @param money
+ * @param bets 各賭けの配列
+ * @param money 所持金
  * @returns boolean
  */
 export function canSubmitBets(bets: Bet[], money: number): boolean {
@@ -91,7 +99,15 @@ export function canSubmitBets(bets: Bet[], money: number): boolean {
   );
 }
 
-// betType + 選択済みの馬から、payout計算用の BetSelection を組み立てる
+/**
+ * 賭け方 + 選択済みの馬から、払い戻し計算用の BetSelection を組み立てる
+ *
+ * 払い戻しを計算するための、ベット情報をまとめたオブジェクトを生成する
+ *
+ * @param betType 賭け方
+ * @param selectedRunners 選択済みの馬
+ * @returns BetSelection (払い戻し計算用のベット情報(ベットの種類と選んだ馬を含む))
+ */
 export function buildBetSelection(
   betType: BetType,
   selectedRunners: Runner[],
@@ -113,4 +129,43 @@ export function buildBetSelection(
         runners: selectedRunners as [Runner, Runner],
       };
   }
+}
+
+/**
+ * 賭け方の日本語表示を返す関数
+ *
+ * @param betType 賭け方
+ * @returns 文字列
+ */
+export function betTypeLabel(betType: BetType): string {
+  switch (betType) {
+    case "WIN":
+      return "単勝";
+    case "PLACE":
+      return "複勝";
+    case "TRIO":
+      return "3連複";
+    case "TRIFECTA":
+      return "3連単";
+    case "QUINELLA":
+      return "馬連";
+    case "EXACTA":
+      return "馬単";
+  }
+}
+
+/**
+ * 選んだ馬の名前表示用の文字列を作る関数
+ *
+ * 着順が関係あるなら「1. 馬名 → 2. 馬名」の形
+ * 着順が関係ないなら「馬名 / 馬名」の形
+ *
+ * @param bet 賭け方と選択済みの馬の情報
+ * @returns 文字列
+ */
+export function formatSelectedRunners(bet: Bet): string {
+  if (isOrderedBetType(bet.betType)) {
+    return bet.selectedRunners.map((r, i) => `${i + 1}. ${r.name}`).join(" → ");
+  }
+  return bet.selectedRunners.map((r) => r.name).join(" / ");
 }
