@@ -6,8 +6,8 @@
  */
 
 import { useState } from "react";
-import type { RaceHistory, Runner } from "../types/game";
-import { horseStats, type HorseStats } from "../logic/history";
+import type { RaceHistory, Runner, HorseStats } from "../types/game";
+import { horseStats } from "../logic/history";
 import FrameNumber from "./FrameNumber";
 import styles from "./HistoryModal.module.css";
 
