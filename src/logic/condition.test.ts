@@ -4,10 +4,10 @@ import {
   dealConditions,
   isValidConditions,
   applyCondition,
-  type Condition,
 } from "./condition";
 import { makeFinishOrder } from "./race";
 import { runners } from "../data/runners";
+import type { Condition } from "../types/game";
 
 describe("dealConditions", () => {
   const counts = (c: Record<string, Condition>) => {

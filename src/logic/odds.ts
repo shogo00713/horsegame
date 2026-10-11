@@ -6,13 +6,8 @@
  * それ以外の賭け方のオッズは、必要となる時のみ計算される
  */
 
-import {
-  applyCondition,
-  DECK_RATIO,
-  NORMAL_CONDITION,
-  type Condition,
-} from "./condition";
-import type { BetType, Runner } from "../types/game";
+import { applyCondition, DECK_RATIO, NORMAL_CONDITION } from "./condition";
+import type { BetType, Runner, Condition } from "../types/game";
 
 // 券種ごとの払い戻し率(調子が分からない人が、平均して戻る割合)
 // 本来1以上はあまり設定しないが、面白さのために極めて高い値を入れている

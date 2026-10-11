@@ -14,6 +14,7 @@ import BetPanel from "./components/BetPanel";
 import PayoutPanel from "./components/PayoutPanel";
 
 export default function App() {
+  // --- 必要となる状態をそれぞれのhooksから引っ張ってくる ---
   const {
     runners,
     money,
@@ -39,11 +40,11 @@ export default function App() {
     accept,
     resetMoney,
   } = useHorseGame();
-
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const tutorial = useTutorial();
   const { theme, toggleTheme } = useTheme();
+  // ----------------------------------------------------
 
   // 馬ごとに、その馬を選んでいるベットの番号(BET1, BET2…)をまとめる。着順側の印に使う
   const betMarks: Record<string, number[]> = {};
@@ -53,8 +54,10 @@ export default function App() {
     });
   });
 
+  // 実際の画面の描画がこれ以下
   return (
     <div className={styles.app}>
+      {/* 履歴モーダルの表示の設定 */}
       <HistoryModal
         isOpen={isHistoryOpen}
         onClose={() => setIsHistoryOpen(false)}
@@ -62,6 +65,7 @@ export default function App() {
         runners={runners}
       />
 
+      {/* メニューモーダルの表示の設定 */}
       {isMenuOpen && (
         <MenuModal
           onClose={() => setIsMenuOpen(false)}
@@ -73,6 +77,7 @@ export default function App() {
         />
       )}
 
+      {/* チュートリアルの表示の設定 */}
       {tutorial.isOpen && <Tutorial onClose={tutorial.close} />}
 
       {/* ヘッダー部分 */}
@@ -103,7 +108,7 @@ export default function App() {
             </p>
           )}
 
-          {/* PAYOUTフェーズ中は、BETパネルの代わりに払い戻しパネルだけを表示する(同じサイズのカードとして差し替え) */}
+          {/* 払い戻し or ベットパネル */}
           {phase === "PAYOUT" ? (
             <PayoutPanel
               betResults={betResults}

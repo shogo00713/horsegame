@@ -7,12 +7,11 @@
  */
 
 import { useState } from "react";
-import type { BetType, Phase, Runner, Bet } from "../types/game";
+import type { BetType, Phase, Runner, Bet, Conditions } from "../types/game";
 import styles from "./BetPanel.module.css";
 import BetSummary from "./BetSummary";
 import BetEditor from "./BetEditor";
 import Icon from "./Icon";
-import type { Conditions } from "../logic/condition";
 import { isValidBet, buildBetSelection } from "../logic/betRules";
 import { calculateMaxPayout } from "../logic/payout";
 

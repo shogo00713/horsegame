@@ -8,11 +8,11 @@
  *            既に成立しているベットの場合はそのまま(編集内容を保持して)閉じる
  */
 
-import type { BetType, Runner, Bet } from "../types/game";
+import type { BetType, Runner, Bet, Conditions } from "../types/game";
 import { isOrderedBetType, isValidBet, betTypeLabel } from "../logic/betRules";
 import styles from "./BetEditor.module.css";
 import RunnerRow from "./RunnerRow";
-import { CONDITION_LABELS, type Conditions } from "../logic/condition";
+import { CONDITION_LABELS } from "../logic/condition";
 import Icon from "./Icon";
 
 // 賭け金の定額ボタン

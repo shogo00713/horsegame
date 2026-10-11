@@ -5,8 +5,8 @@
  * 強さをベースに1頭ずつピックする方式で馬が選ばれる
  */
 
-import { Runner } from "../types/game";
-import { applyCondition, NORMAL_CONDITION, type Conditions } from "./condition";
+import { Runner, Conditions } from "../types/game";
+import { applyCondition, NORMAL_CONDITION } from "./condition";
 
 /**
  * ランダムに1頭の馬を選ぶ関数

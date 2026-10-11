@@ -8,10 +8,9 @@
  * 調子は5段階 (0: 絶不調 〜 4: 絶好調)
  */
 
-import type { Runner } from "../types/game";
+import type { Runner, Condition, Conditions } from "../types/game";
 
-// 馬の調子の種類・段階数・デフォルト値
-export type Condition = 0 | 1 | 2 | 3 | 4;
+// 調子の段数・デフォルトの値
 export const CONDITION_LEVELS = 5;
 export const NORMAL_CONDITION: Condition = 2; // デフォルトは2
 
@@ -26,9 +25,6 @@ export const SWAP_PROBABILITY = [0.2, 0.3, 0.3, 0.2];
 // 絶不調0.05倍・不調0.2倍・普通1倍・好調5倍・絶好調8倍
 export const MULTIPLIERS = [0.05, 0.2, 1, 5, 8];
 export const MIN_WEIGHT = 1e-6; // 絶不調でも重みは正のままにするための最小値
-
-// 全馬ぶんの調子を、馬のIDごとにまとめた形
-export type Conditions = Record<string, Condition>;
 
 // 表示名(デバッグ表示用)
 export const CONDITION_LABELS = ["絶不調", "不調", "普通", "好調", "絶好調"];

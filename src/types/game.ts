@@ -53,3 +53,9 @@ export type HorseStats = {
   wins: number; // 1着の回数
   top3: number; // 3着以内の回数
 };
+
+// 馬の調子の種類・段階数・デフォルト値
+export type Condition = 0 | 1 | 2 | 3 | 4;
+
+// 全馬ぶんの調子を、馬のIDごとにまとめた形
+export type Conditions = Record<string, Condition>;

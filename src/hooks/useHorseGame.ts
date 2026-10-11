@@ -1,7 +1,7 @@
 /**
  * 競馬ゲーム全体の進行を管理するカスタムフック
  *
- * go() で1回のレースが進行する(同時に複数件のベットを判定する)
+ * go() で1回のレースが進行する
  * accept() でレース結果を確定し、次のレースに進む
  */
 
@@ -14,25 +14,23 @@ import type {
   RaceHistory,
   Bet,
   BetResult,
+  Conditions,
 } from "../types/game";
 import { makeFinishOrder } from "../logic/race";
 import { calculatePayout } from "../logic/payout";
 import { MAX_HISTORY } from "../logic/history";
 import { DRAW_DURATION_MS } from "../logic/drawAnimation";
-import {
-  dealConditions,
-  isValidConditions,
-  type Conditions,
-} from "../logic/condition";
+import { dealConditions, isValidConditions } from "../logic/condition";
 import {
   maxSelectable,
   buildBetSelection,
   canResetMoney,
-  isValidBet,
   totalBetAmount,
   canSubmitBets,
+  validateBetRules,
 } from "../logic/betRules";
 
+// 最大のベット件数
 const MAX_BETS = 5;
 
 // 空のベットを1件作る
@@ -45,8 +43,13 @@ function createEmptyBet(): Bet {
   };
 }
 
-// ----- 保存データの読み込み -----
+// --- 保存データの読み込み系 ---
 
+/**
+ * localStorage から過去のレース結果を読み込む関数
+ *
+ * @returns 過去のレース結果
+ */
 function loadHistory(): RaceHistory[] {
   try {
     const saved = localStorage.getItem("horse-race-history");
@@ -56,24 +59,40 @@ function loadHistory(): RaceHistory[] {
   }
 }
 
+/**
+ * localStorage から現在のレース番号を読み込む関数
+ *
+ * レース番号自体が生きるところはあまりないが、履歴で表示する用にまだ置いている
+ *
+ * @returns 現在のレース番号 (整数)
+ */
 function loadRaceNo(): number {
   const saved = localStorage.getItem("horse-race-no");
   return saved ? Number(saved) : 1;
 }
 
-// 保存されている調子が正しければ復元し、無ければ新しく配る
+/**
+ * localStorage から各馬の調子を引き継いで読み込む関数
+ *
+ * 調子の形式が不正 or 初回の場合は、dealConditions() で新しく調子を配り直す
+ *
+ * @returns 各馬の調子を、馬のIDごとにまとめた形
+ */
 function loadConditions(): Conditions {
   try {
     const saved = localStorage.getItem("horse-conditions");
     const parsed: unknown = saved ? JSON.parse(saved) : null;
     if (isValidConditions(parsed, runners)) return parsed;
   } catch {
-    // 壊れた保存データは無視して作り直す
+    // 壊れたデータは無視して作り直す
   }
   return dealConditions(runners);
 }
 
+// ------------------------------
+
 export function useHorseGame() {
+  // --- ゲームの状態を保持するstateたち (めちゃ重要!!!!!!!) ---
   const [money, setMoney] = useState(5000);
   const [phase, setPhase] = useState<Phase>("BETTING");
   const [payout, setPayout] = useState(0);
@@ -82,8 +101,10 @@ export function useHorseGame() {
   const [result, setResult] = useState<Runner[]>([]);
   const [previousResult, setPreviousResult] = useState<Runner[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
-  // 抽選演出が終わって PAYOUT に進むまでのタイマー(スキップ時に止める)
   const drawTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [raceHistory, setRaceHistory] = useState<RaceHistory[]>(loadHistory);
+  const [raceNo, setRaceNo] = useState<number>(loadRaceNo);
+  const [conditions, setConditions] = useState<Conditions>(loadConditions);
 
   useEffect(
     () => () => {
@@ -91,8 +112,14 @@ export function useHorseGame() {
     },
     [],
   );
+  // ----------------------------------------------------
 
-  // ベットを1件追加する(最大5件まで)。追加できたら、そのベットのIDを返す
+  // --- ベットに関する操作の関数たち ---
+  /**
+   * 新たにベットを1件追加する関数
+   *
+   * @returns 作成したベットのID (0~最大サイズ-1)
+   */
   function addBet(): string | null {
     if (bets.length >= MAX_BETS) return null;
     const newBet = createEmptyBet();
@@ -100,12 +127,21 @@ export function useHorseGame() {
     return newBet.id;
   }
 
-  // ベットを1件削除する
+  /**
+   * ベットを1件削除する関数
+   *
+   * @param id 削除するベットのID
+   */
   function removeBet(id: string) {
     setBets((prev) => prev.filter((b) => b.id !== id));
   }
 
-  // 指定したベットの賭け方を切り替える(選択中の馬はリセットする)
+  /**
+   * 指定したベットの賭け方を変更する関数
+   *
+   * @param id 変更するベットのID
+   * @param nextBetType 変更先の賭け方
+   */
   function changeBetType(id: string, nextBetType: BetType) {
     setBets((prev) =>
       prev.map((b) =>
@@ -114,14 +150,24 @@ export function useHorseGame() {
     );
   }
 
-  // 指定したベットの賭け金額を変更する
+  /**
+   * 指定したベットの賭け金額を変更する関数
+   *
+   * @param id 変更するベットのID
+   * @param value 変更先の賭け金額
+   */
   function changeBetAmount(id: string, value: string) {
     setBets((prev) =>
       prev.map((b) => (b.id === id ? { ...b, betstr: value } : b)),
     );
   }
 
-  // 指定したベットの、選択中の馬を切り替える
+  /**
+   * 指定したベットの、選択中の馬を切り替える関数
+   *
+   * @param id 変更するベットのID
+   * @param runner 選択する馬
+   */
   function toggleRunner(id: string, runner: Runner) {
     setBets((prev) =>
       prev.map((b) => {
@@ -156,15 +202,15 @@ export function useHorseGame() {
       }),
     );
   }
+  // ---------------------------------
 
-  // 初期値を localStorage から復元
-  const [raceHistory, setRaceHistory] = useState<RaceHistory[]>(loadHistory);
-  const [raceNo, setRaceNo] = useState<number>(loadRaceNo);
-
-  // 馬の調子(画面には出さない隠しパラメータ。次のレースの着順に影響する)
-  const [conditions, setConditions] = useState<Conditions>(loadConditions);
-
-  // 所持金をリセットする補助関数
+  /**
+   * 所持金をリセットする関数
+   *
+   * フェーズがBETTINGで、所持金が500円以下のときのみ有効(canResetMoney() で検証)
+   *
+   * @returns なし
+   */
   function resetMoney() {
     if (canResetMoney(phase, money)) {
       if (window.confirm("所持金を2000円にリセットします。よろしいですか？")) {
@@ -175,24 +221,25 @@ export function useHorseGame() {
     }
   }
 
+  /**
+   * 実際の1レースの進行を行う関数
+   *
+   * BETするのボタンを押した瞬間から動き出して、その結果の確定までを時系列で行う
+   *
+   * @returns なし (内部での状態の更新がすべて)
+   */
   function go() {
     // ----- 抽選前 -----
-
     if (phase !== "BETTING") return;
+
+    // すでにベットは確定、その全額を計算
+    const total = totalBetAmount(bets);
 
     // 入力のエラーチェック
     setErrorMessage("");
-    if (bets.length === 0) {
-      setErrorMessage("ベットを1件以上追加してください。");
-      return;
-    }
-    if (!bets.every(isValidBet)) {
-      setErrorMessage("馬の選択か金額が未入力のベットがあります。");
-      return;
-    }
-    const total = totalBetAmount(bets);
-    if (total > money) {
-      setErrorMessage("所持金が不足しています。");
+    const error = validateBetRules(bets, total, money);
+    if (error) {
+      setErrorMessage(error);
       return;
     }
 
@@ -218,13 +265,13 @@ export function useHorseGame() {
     setBetResults(results);
     setPayout(results.reduce((sum, r) => sum + r.payout, 0));
 
+    // 抽選演出のアニメーション
     drawTimerRef.current = setTimeout(() => {
       drawTimerRef.current = null;
       setPhase("PAYOUT");
     }, DRAW_DURATION_MS);
   }
 
-  // 抽選演出を飛ばして、すぐに結果発表へ進む
   function skipDrawing() {
     if (phase !== "DRAWING") return;
     if (drawTimerRef.current) {
@@ -234,6 +281,11 @@ export function useHorseGame() {
     setPhase("PAYOUT");
   }
 
+  /**
+   * レース結果を確定し、次のレースに進む関数
+   *
+   * @returns なし (内部での状態の更新がすべて)
+   */
   function accept() {
     // 新しい履歴を作成
     const newHistory: RaceHistory = {

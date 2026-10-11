@@ -82,6 +82,32 @@ export function totalBetAmount(bets: Bet[]): number {
 }
 
 /**
+ * 選択したベットが正しいかどうかを総合的に判定する関数
+ *
+ * @param bets 選んだベットの配列
+ * @param total ベットの合計金額
+ * @param money 所持金額
+ * @returns エラーメッセージ、またはnull
+ */
+export function validateBetRules(
+  bets: Bet[],
+  total: number,
+  money: number,
+): string | null {
+  // 入力のエラーチェック
+  if (bets.length === 0) {
+    return "ベットを1件以上追加してください。";
+  }
+  if (!bets.every(isValidBet)) {
+    return "馬の選択か金額が未入力のベットがあります。";
+  }
+  if (total > money) {
+    return "所持金が不足しています。";
+  }
+  return null;
+}
+
+/**
  * ベットボタンを押していいかどうかを判定する関数
  *
  * 次の条件を全て満たすことが必要
