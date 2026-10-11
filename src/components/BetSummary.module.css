@@ -33,14 +33,14 @@
 
 .index {
   font-size: clamp(14px, 1.3vw, 16px);
-  font-weight: 900;
+  font-weight: 700;
   color: var(--muted);
   white-space: nowrap;
 }
 
 .betType {
   font-size: clamp(18px, 1.8vw, 24px);
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .runnerNames {
@@ -62,14 +62,14 @@
 
 .statLabel {
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 500;
   color: var(--muted);
 }
 
 .statValue,
 .payoutValue {
   font-size: clamp(20px, 2.2vw, 28px);
-  font-weight: 900;
+  font-weight: 700;
   line-height: 1.2;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
@@ -77,7 +77,7 @@
 
 /* 最大払戻だけ青く強調する */
 .payoutValue {
-  color: var(--accent);
+  color: var(--shu);
 }
 
 .removeButton {

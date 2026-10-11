@@ -2,7 +2,6 @@
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(3px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -31,7 +30,7 @@
 .title {
   margin: 0;
   font-size: 24px;
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.06em;
 }
 
@@ -61,7 +60,7 @@
   flex: 1;
   border: none;
   padding: 10px;
-  font-weight: 700;
+  font-weight: 500;
   background: transparent;
   color: var(--muted);
 }
@@ -136,7 +135,7 @@
 }
 
 .raceNo {
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .raceAgo {
@@ -163,13 +162,13 @@
 
 .podiumRank {
   width: 2.2em;
-  font-weight: 900;
+  font-weight: 700;
   color: var(--tone);
 }
 
 .podiumName {
   flex: 1;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .podiumOdds {
@@ -198,7 +197,7 @@
 
 .restRank {
   width: 2.2em;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 /* ----- 馬別 ----- */
@@ -248,12 +247,12 @@
 
 .horseName {
   font-size: 20px;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .horseOdds {
   font-size: 18px;
-  font-weight: 900;
+  font-weight: 700;
   color: var(--accent);
 }
 
@@ -272,7 +271,7 @@
 .horseStats dd {
   margin: 0;
   font-size: 28px;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 /* 着順の推移(棒グラフ) */
@@ -308,6 +307,6 @@
   left: 50%;
   transform: translateX(-50%);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 500;
   color: var(--tone);
 }

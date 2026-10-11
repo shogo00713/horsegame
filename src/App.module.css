@@ -11,8 +11,8 @@
   max-width: 2200px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 24px;
-  margin: 24px auto;
+  gap: clamp(32px, 5vw, 72px);
+  margin: 20px auto 32px;
 }
 
 /* 左右のカードが並べられない幅(半分の画面・スマホ)では、縦に積む */

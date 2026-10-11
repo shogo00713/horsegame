@@ -9,7 +9,7 @@
   flex: 1;
   border: none;
   padding: 10px;
-  font-weight: 700;
+  font-weight: 500;
   background: transparent;
   color: var(--muted);
 }
@@ -38,7 +38,7 @@
 }
 
 .settingName {
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .settingNote {
@@ -52,5 +52,5 @@
   align-items: center;
   gap: 6px;
   white-space: nowrap;
-  font-weight: 700;
+  font-weight: 500;
 }

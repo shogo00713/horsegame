@@ -28,12 +28,12 @@
 
 .runnerName {
   flex: 1;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .runnerOdds {
-  font-weight: 900;
-  color: var(--accent);
+  font-weight: 500;
+  color: var(--text);
 }
 
 .runnerBadge {
@@ -46,7 +46,7 @@
   padding: 0 4px;
   border-radius: 999px;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 500;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -59,7 +59,7 @@
   margin-left: auto;
   padding: 1px 6px;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 500;
   color: var(--danger);
   border: 1px dashed var(--danger);
 }

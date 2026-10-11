@@ -1,7 +1,6 @@
 .list {
   display: grid;
-  border: 1px solid var(--border);
-  background: var(--bg);
+  border-top: 1px solid var(--border);
 }
 
 .head {
@@ -9,11 +8,11 @@
   grid-template-columns: 48px 1fr auto;
   gap: 12px;
   padding: 8px 16px;
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.3em;
   color: var(--muted);
-  background: var(--bg-card);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--text);
 }
 
 .headOdds {
@@ -24,7 +23,7 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 10px 16px;
+  padding: 12px 4px;
   border-bottom: 1px solid var(--border);
 }
 
@@ -38,7 +37,7 @@
   width: 36px;
   height: 28px;
   background: currentColor;
-  color: var(--text);
+  color: var(--muted);
   -webkit-mask: url("../assets/horse.svg") center / contain no-repeat;
   mask: url("../assets/horse.svg") center / contain no-repeat;
 }
@@ -52,7 +51,8 @@
 
 .name {
   font-size: 18px;
-  font-weight: 900;
+  font-weight: 600;
+  letter-spacing: 0.08em;
 }
 
 .description {
@@ -65,7 +65,7 @@
   flex: none;
   padding: 2px 8px;
   font-size: 12px;
-  font-weight: 900;
+  font-weight: 700;
   color: var(--tone);
   border: 1px solid var(--tone);
 }
@@ -86,8 +86,8 @@
   flex: none;
   width: 3.5em;
   text-align: right;
-  font-size: 20px;
-  font-weight: 900;
+  font-size: 24px;
+  font-weight: 500;
   font-variant-numeric: tabular-nums;
 }
 

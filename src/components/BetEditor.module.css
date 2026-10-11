@@ -13,7 +13,7 @@
 
 .title {
   font-size: 20px;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .guide {
@@ -28,7 +28,7 @@
 
 .label {
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 500;
   color: var(--muted);
 }
 
@@ -44,7 +44,7 @@
   min-width: 84px;
   padding: 12px 8px;
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 500;
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--text);
@@ -71,7 +71,7 @@
 }
 
 .yen {
-  font-weight: 700;
+  font-weight: 500;
 }
 
 /* 賭け金: 定額ボタン3つ + 好きな額の入力欄(いちばん右) */
@@ -86,7 +86,7 @@
   min-width: 84px;
   padding: 12px 8px;
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 500;
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--text);
@@ -124,7 +124,7 @@
   min-width: 0;
   padding: 10px 0;
   font-size: 18px;
-  font-weight: 700;
+  font-weight: 500;
   border: none;
   background: transparent;
   color: var(--text);
@@ -144,7 +144,7 @@
   background: var(--accent);
   color: var(--accent-contrast);
   border-color: var(--accent);
-  font-weight: 700;
+  font-weight: 500;
   padding: 14px;
 }
 

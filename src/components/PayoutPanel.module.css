@@ -1,8 +1,8 @@
 .payoutPanel {
   width: 100%;
-  padding: 18px;
-  border: 1px solid var(--border);
-  background: var(--bg-card);
+  padding: 22px 0 0;
+  border-top: 1px solid var(--border);
+  background: transparent;
 
   display: flex;
   flex-direction: column;
@@ -33,7 +33,7 @@
 .emptySlot {
   flex: 1 1 0;
   min-height: 44px;
-  border: 1px dashed var(--border);
+  border: 1px solid var(--border);
   background: transparent;
 }
 
@@ -49,7 +49,7 @@
 
 .betType {
   font-size: 20px;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .runnerNames {
@@ -59,9 +59,9 @@
 }
 
 .hit {
-  color: var(--accent);
+  color: var(--shu);
   font-size: 32px;
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.1em;
   white-space: nowrap;
 }
@@ -69,13 +69,13 @@
 .miss {
   color: var(--muted);
   font-size: 22px;
-  font-weight: 700;
+  font-weight: 500;
   white-space: nowrap;
 }
 
 .betPayout {
   font-size: 26px;
-  font-weight: 900;
+  font-weight: 700;
   white-space: nowrap;
 }
 
@@ -93,8 +93,8 @@
 }
 
 .totalValue {
-  font-size: 40px;
-  font-weight: 900;
+  font-size: 44px;
+  font-weight: 500;
   letter-spacing: 0.2px;
 }
 
@@ -102,7 +102,7 @@
   background: var(--accent);
   color: var(--accent-contrast);
   border-color: var(--accent);
-  font-weight: 700;
+  font-weight: 500;
   font-size: 18px;
   padding: 16px;
 }

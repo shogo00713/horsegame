@@ -1,8 +1,8 @@
 .betPanel {
   width: 100%;
-  padding: 18px;
-  border: 1px solid var(--border);
-  background: var(--bg-card);
+  padding: 22px 0 0;
+  border-top: 1px solid var(--border);
+  background: transparent;
 
   display: flex;
   flex-direction: column;
@@ -16,16 +16,18 @@
 }
 
 .mainTitle {
-  font-size: 22px;
-  font-weight: 900;
-  letter-spacing: 0.08em;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--muted);
 }
 
 .lead {
   margin: 0;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--accent);
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--text);
 }
 
 .guide {
@@ -53,7 +55,7 @@
   font-size: 22px;
   align-items: center;
   justify-content: center;
-  border: 1px dashed var(--border);
+  border: 1px solid var(--border);
   color: var(--muted);
   background: transparent;
 }
@@ -66,7 +68,7 @@
 
 .emptyHint {
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .row {
@@ -74,12 +76,13 @@
   align-items: baseline;
   justify-content: space-between;
   gap: 8px;
-  font-weight: 900;
+  font-weight: 700;
   font-size: clamp(18px, 1.8vw, 24px);
 }
 
 .row span:last-child {
-  font-size: clamp(28px, 3.2vw, 42px);
+  font-size: clamp(30px, 3.4vw, 46px);
+  font-weight: 500;
   font-variant-numeric: tabular-nums;
 }
 
@@ -87,10 +90,10 @@
   background: var(--accent);
   color: var(--accent-contrast);
   border-color: var(--accent);
-  font-weight: 700;
-  font-size: 18px;
-  letter-spacing: 0.1em;
-  padding: 16px;
+  font-weight: 500;
+  font-size: 16px;
+  letter-spacing: 0.4em;
+  padding: 18px;
 }
 
 .betPanelSubmitButton:hover {
@@ -99,6 +102,6 @@
 
 @media (max-width: 600px) {
   .betPanel {
-    padding: 12px;
+    padding: 16px 0 0;
   }
 }

@@ -19,7 +19,7 @@
 .stepTitle {
   margin: 4px 0 0;
   font-size: 22px;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .lines {
@@ -51,7 +51,7 @@
 
 .type dt {
   width: 4.5em;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .type dd {
@@ -86,7 +86,7 @@
 .footer button {
   min-width: 120px;
   padding: 12px;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .skip {

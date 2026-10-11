@@ -1,8 +1,8 @@
 .resultPanel {
   width: 100%;
-  padding: 18px;
-  border: 1px solid var(--border);
-  background: var(--bg-card);
+  padding: 22px 0 0;
+  border-top: 1px solid var(--border);
+  background: transparent;
 
   display: grid;
   gap: 10px;
@@ -15,15 +15,18 @@
 }
 
 .mainTitle {
-  font-size: 22px;
-  font-weight: 900;
-  letter-spacing: 0.08em;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--muted);
 }
 
 .phaseMessage {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--accent);
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--text);
 }
 
 .guide {
@@ -35,7 +38,7 @@
 
 .sectionTitle {
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 500;
   color: var(--muted);
 }
 
@@ -50,7 +53,7 @@
 
 .finishLine {
   font-size: 16px;
-  font-weight: 800;
+  font-weight: 700;
   padding: 8px 14px;
   border: 1px solid var(--border);
   background: var(--bg-card);
@@ -69,14 +72,14 @@
 
 .finishRank {
   display: inline-block;
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.2px;
 }
 
 .finishName {
   color: var(--text);
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .finishRank1 {
@@ -127,7 +130,7 @@
 
 .raceProgressLabel {
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 500;
   color: var(--muted);
   white-space: nowrap;
 }
@@ -158,7 +161,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  font-weight: 700;
+  font-weight: 500;
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--text);
@@ -174,7 +177,7 @@
 
 .plateTag {
   font-size: 11px;
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.02em;
   padding: 1px 0;
   width: 100%;
@@ -233,17 +236,17 @@
 
 .rowTag {
   font-size: 11px;
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.05em;
   padding: 1px 0;
   width: 100%;
   text-align: center;
-  color: var(--accent);
-  border: 1px solid var(--accent);
+  color: var(--shu);
+  border: 1px solid var(--shu);
 }
 
 @media (max-width: 600px) {
   .resultPanel {
-    padding: 12px;
+    padding: 16px 0 0;
   }
 }
