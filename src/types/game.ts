@@ -1,61 +1,120 @@
-// このゲームの中で使用する型定義をまとめたファイル
+/**
+ * このゲームの中で使用する型定義をまとめたファイル
+ *
+ * 基本的にすべて Type で統一している
+ */
 
-// ゲームの進行フェーズ
+/**
+ * ゲームの進行フェーズ
+ * - BETTING: ベット受付中
+ * - DRAWING: レース中
+ * - PAYOUT: 払い戻し中
+ */
 export type Phase = "BETTING" | "DRAWING" | "PAYOUT";
 
-// ベットの種類
-export type BetType =
-  "WIN" | "PLACE" | "TRIO" | "TRIFECTA" | "QUINELLA" | "EXACTA";
-
-// 各ベットの選択肢
+/**
+ * 賭け方と選択する馬の組み合わせをまとめた型
+ *
+ * - 単勝・複勝: 1頭の馬を選ぶ
+ * - 馬連・馬単: 2頭の馬を選ぶ
+ * - 3連複・3連単: 3頭の馬を選ぶ
+ */
 export type BetSelection =
-  | { betType: "WIN"; runner: Runner }
-  | { betType: "PLACE"; runner: Runner }
-  | { betType: "QUINELLA"; runners: [Runner, Runner] }
-  | { betType: "EXACTA"; runners: [Runner, Runner] }
-  | { betType: "TRIO"; runners: [Runner, Runner, Runner] }
-  | { betType: "TRIFECTA"; runners: [Runner, Runner, Runner] };
+  | { betType: "WIN" | "PLACE"; runner: Runner }
+  | { betType: "QUINELLA" | "EXACTA"; runners: [Runner, Runner] }
+  | { betType: "TRIO" | "TRIFECTA"; runners: [Runner, Runner, Runner] };
 
-// レースの履歴
-export type RaceHistory = {
-  raceNo: number; // 第n戦
-  result: Runner[]; // 着順
-};
+/**
+ * 賭け方の種類だけを取り出した型
+ */
+export type BetType = BetSelection["betType"];
 
-// 1件分のベット(同一レースに対して複数件、同時に持てる)
-export type Bet = {
+/**
+ * 未確定のベットを構成していくための型
+ *
+ * 同時に複数のベットをすると、idが異なることとなる
+ *
+ * - id : ベットの識別子(ランダムな文字列)
+ * - betType : 賭け方の種類
+ * - selectedRunners : 選択済みの馬の配列
+ * - betstr : 賭け金の文字列(表示用)
+ */
+export type BetDraft = {
   id: string;
   betType: BetType;
   selectedRunners: Runner[];
   betstr: string;
 };
 
-// 1件分のベットの払い戻し結果
+/**
+ * ベットとその払い戻し額をまとめた型
+ *
+ * 各ベットに対して、払い戻し額を計算するための一時保持を担当する
+ *
+ * - bet : ベットの情報
+ * - payout : 払い戻し額
+ */
 export type BetResult = {
-  bet: Bet;
+  bet: BetDraft;
   payout: number;
 };
 
-// 馬の情報
-export interface Runner {
+/**
+ * 各馬の情報をまとめた型
+ *
+ * - id : 馬の識別子(ランダムな文字列)
+ * - name : 馬の名前
+ * - odds : 単勝オッズ(小数)
+ * - description : 馬の説明(省略可能)
+ * - strength : 馬の強さ(省略可能)
+ */
+export type Runner = {
   id: string;
   name: string;
   odds: number;
-  description?: string; // 出走馬一覧に出す一言紹介
-  strength?: number; // 着順を決めるときの基本の強さ(省略時は 1/odds)
-}
-
-// 馬の成績の集計
-export type HorseStats = {
-  runner: Runner;
-  ranks: number[]; // 各レースでの着順(1-indexed)。新しいレースが先頭
-  average: number | null; // 平均着順 (出走がなければnull)
-  wins: number; // 1着の回数
-  top3: number; // 3着以内の回数
+  description?: string;
+  strength?: number;
 };
 
-// 馬の調子の種類・段階数・デフォルト値
+/**
+ * 馬の調子を表す型
+ *
+ * 0が絶不調で、4が絶好調
+ */
 export type Condition = 0 | 1 | 2 | 3 | 4;
 
-// 全馬ぶんの調子を、馬のIDごとにまとめた形
+/**
+ * 各馬のIDと調子をまとめた型
+ *
+ * - key : 馬のID
+ * - value : 馬の調子(0〜4)
+ */
 export type Conditions = Record<string, Condition>;
+
+/**
+ * 実行済みのレースの履歴をまとめた型
+ *
+ * - raceNo : 第n戦
+ * - result : 着順の配列(先頭が1着)
+ */
+export type RaceHistory = {
+  raceNo: number; // 第n戦
+  result: Runner[]; // 着順
+};
+
+/**
+ * 馬の成績の集計
+ *
+ * - runner : 馬の情報
+ * - ranks : 各レースでの着順(1-indexed)。新しいレースが先頭
+ * - average : 平均着順 (出走がなければnull)
+ * - wins : 1着の回数
+ * - top3 : 3着以内の回数
+ */
+export type HorseStats = {
+  runner: Runner;
+  ranks: number[];
+  average: number | null;
+  wins: number;
+  top3: number;
+};

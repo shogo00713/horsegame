@@ -5,7 +5,13 @@
  * それらを賭け方を引数として判定する関数がまとめてある
  */
 
-import type { BetType, BetSelection, Runner, Phase, Bet } from "../types/game";
+import type {
+  BetType,
+  BetSelection,
+  Runner,
+  Phase,
+  BetDraft,
+} from "../types/game";
 
 /**
  * 所持金リセットボタンを押してもいいかどうかを判定する
@@ -55,56 +61,59 @@ export function isOrderedBetType(betType: BetType): boolean {
 }
 
 /**
- * 正しいベットの形式をしているかを総合的に判定する関数
- *
- * 次の2つの条件を満たしている場合に True
- * - 選んだ馬の数が正しいか
- * - 金額が1円以上か
- *
- * @param bet 賭け方とその金額
- * @returns boolean
- */
-export function isValidBet(bet: Bet): boolean {
-  const amount = Number(bet.betstr);
-  return (
-    amount > 0 && bet.selectedRunners.length === maxSelectable(bet.betType)
-  );
-}
-
-/**
  * ベット金額の合計を計算する関数
  *
  * @param bets 各賭けの配列
  * @returns 整数
  */
-export function totalBetAmount(bets: Bet[]): number {
+export function totalBetAmount(bets: BetDraft[]): number {
   return bets.reduce((sum, bet) => sum + Number(bet.betstr), 0);
 }
 
 /**
- * 選択したベットが正しいかどうかを総合的に判定する関数
+ * 賭け方 + 選択済みの馬から、払い戻し計算用の BetSelection を組み立てる
  *
- * @param bets 選んだベットの配列
- * @param total ベットの合計金額
- * @param money 所持金額
- * @returns エラーメッセージ、またはnull
+ * BETTINGからDROWINGに移行する際に、選択状態を確定状態に移植するにあたる操作
+ * うまく構成できなかったら null を返す
+ *
+ * @param betType 賭け方
+ * @param runners 選択済みの馬
+ * @returns BetSelection (払い戻し計算用のベット情報(ベットの種類と選んだ馬を含む))
  */
-export function validateBetRules(
-  bets: Bet[],
-  total: number,
-  money: number,
-): string | null {
-  // 入力のエラーチェック
-  if (bets.length === 0) {
-    return "ベットを1件以上追加してください。";
+export function buildBetSelection(
+  betType: BetType,
+  runners: Runner[],
+): BetSelection | null {
+  switch (betType) {
+    case "WIN":
+    case "PLACE":
+      return runners.length === 1 ? { betType, runner: runners[0] } : null;
+    case "QUINELLA":
+    case "EXACTA":
+      return runners.length === 2
+        ? { betType, runners: [runners[0], runners[1]] }
+        : null;
+    case "TRIO":
+    case "TRIFECTA":
+      return runners.length === 3
+        ? { betType, runners: [runners[0], runners[1], runners[2]] }
+        : null;
   }
-  if (!bets.every(isValidBet)) {
-    return "馬の選択か金額が未入力のベットがあります。";
-  }
-  if (total > money) {
-    return "所持金が不足しています。";
-  }
-  return null;
+}
+
+/**
+ * 各ベットが正しいかどうかを判定する関数
+ *
+ * 金額が正の整数で、選んだ馬の数が賭け方に応じて正しいかどうかを判定する
+ *
+ * @param bet
+ * @returns boolean
+ */
+export function isValidBet(bet: BetDraft): boolean {
+  return (
+    Number(bet.betstr) > 0 &&
+    buildBetSelection(bet.betType, bet.selectedRunners) !== null
+  );
 }
 
 /**
@@ -119,42 +128,36 @@ export function validateBetRules(
  * @param money 所持金
  * @returns boolean
  */
-export function canSubmitBets(bets: Bet[], money: number): boolean {
+export function canSubmitBets(bets: BetDraft[], money: number): boolean {
   return (
     bets.length > 0 && bets.every(isValidBet) && totalBetAmount(bets) <= money
   );
 }
 
 /**
- * 賭け方 + 選択済みの馬から、払い戻し計算用の BetSelection を組み立てる
+ * 選択したベットが正しいかどうかを総合的に判定する関数
  *
- * 払い戻しを計算するための、ベット情報をまとめたオブジェクトを生成する
- *
- * @param betType 賭け方
- * @param selectedRunners 選択済みの馬
- * @returns BetSelection (払い戻し計算用のベット情報(ベットの種類と選んだ馬を含む))
+ * @param bets 選んだベットの配列
+ * @param total ベットの合計金額
+ * @param money 所持金額
+ * @returns エラーメッセージ、またはnull
  */
-export function buildBetSelection(
-  betType: BetType,
-  selectedRunners: Runner[],
-): BetSelection {
-  switch (betType) {
-    case "WIN":
-    case "PLACE":
-      return { betType, runner: selectedRunners[0] };
-    case "TRIO":
-    case "TRIFECTA":
-      return {
-        betType,
-        runners: selectedRunners as [Runner, Runner, Runner],
-      };
-    case "QUINELLA":
-    case "EXACTA":
-      return {
-        betType,
-        runners: selectedRunners as [Runner, Runner],
-      };
+export function validateBetRules(
+  bets: BetDraft[],
+  total: number,
+  money: number,
+): string | null {
+  // 入力のエラーチェック
+  if (bets.length === 0) {
+    return "ベットを1件以上追加してください。";
   }
+  if (!bets.every(isValidBet)) {
+    return "馬の選択か金額が未入力のベットがあります。";
+  }
+  if (total > money) {
+    return "所持金が不足しています。";
+  }
+  return null;
 }
 
 /**
@@ -189,7 +192,7 @@ export function betTypeLabel(betType: BetType): string {
  * @param bet 賭け方と選択済みの馬の情報
  * @returns 文字列
  */
-export function formatSelectedRunners(bet: Bet): string {
+export function formatSelectedRunners(bet: BetDraft): string {
   if (isOrderedBetType(bet.betType)) {
     return bet.selectedRunners.map((r, i) => `${i + 1}. ${r.name}`).join(" → ");
   }

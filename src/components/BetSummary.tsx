@@ -4,12 +4,12 @@
  * クリックすると編集画面を開く(onEdit)。×ボタンは削除専用
  */
 
-import type { Bet } from "../types/game";
+import type { BetDraft } from "../types/game";
 import { betTypeLabel, formatSelectedRunners } from "../logic/betRules";
 import styles from "./BetSummary.module.css";
 
 type BetSummaryProps = {
-  bet: Bet;
+  bet: BetDraft;
   index: number;
   maxPayout: number | null; // 全部当たったときの払戻額(未成立のベットはnull)
   disabled: boolean;

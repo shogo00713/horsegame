@@ -2,14 +2,14 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import BetEditor from "./BetEditor";
-import type { Runner, Bet } from "../types/game";
+import type { Runner, BetDraft } from "../types/game";
 
 const runners: Runner[] = [
   { id: "phoenix", name: "フェニックス", odds: 1.2 },
   { id: "storm", name: "ストームエッジ", odds: 2.0 },
 ];
 
-function renderEditor(overrides: Partial<Bet> = {}) {
+function renderEditor(overrides: Partial<BetDraft> = {}) {
   const props = {
     bet: {
       id: "bet-1",
@@ -17,7 +17,7 @@ function renderEditor(overrides: Partial<Bet> = {}) {
       selectedRunners: [],
       betstr: "300",
       ...overrides,
-    } as Bet,
+    } as BetDraft,
     runners,
     onChangeBetType: vi.fn(),
     onChangeBetAmount: vi.fn(),

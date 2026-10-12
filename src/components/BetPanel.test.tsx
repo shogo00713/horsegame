@@ -3,7 +3,7 @@ import type { ComponentProps } from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import BetPanel from "./BetPanel";
-import type { Runner, Bet } from "../types/game";
+import type { Runner, BetDraft } from "../types/game";
 
 // テスト用の馬データ
 const runners: Runner[] = [
@@ -11,7 +11,7 @@ const runners: Runner[] = [
   { id: "storm", name: "ストームエッジ", odds: 2.0 },
 ];
 
-function makeBet(overrides: Partial<Bet> = {}): Bet {
+function makeBet(overrides: Partial<BetDraft> = {}): BetDraft {
   return {
     id: "bet-1",
     betType: "WIN",

@@ -7,7 +7,13 @@
  */
 
 import { useState } from "react";
-import type { BetType, Phase, Runner, Bet, Conditions } from "../types/game";
+import type {
+  BetType,
+  Phase,
+  Runner,
+  BetDraft,
+  Conditions,
+} from "../types/game";
 import styles from "./BetPanel.module.css";
 import BetSummary from "./BetSummary";
 import BetEditor from "./BetEditor";
@@ -17,7 +23,7 @@ import { calculateMaxPayout } from "../logic/payout";
 
 // 親コンポーネントから渡されるprops
 type BetPanelProps = {
-  bets: Bet[];
+  bets: BetDraft[];
   phase: Phase;
   runners: Runner[];
   conditions?: Conditions; // デバッグ表示用(開発時のみ使う)
@@ -107,18 +113,19 @@ export default function BetPanel({
           const bet = bets[index];
 
           if (bet) {
+            const selection = buildBetSelection(
+              bet.betType,
+              bet.selectedRunners,
+            );
+            const amount = Number(bet.betstr);
             return (
               <BetSummary
                 key={bet.id}
                 bet={bet}
                 index={index}
                 maxPayout={
-                  isValidBet(bet)
-                    ? calculateMaxPayout(
-                        Number(bet.betstr),
-                        buildBetSelection(bet.betType, bet.selectedRunners),
-                        runners,
-                      )
+                  selection && amount > 0
+                    ? calculateMaxPayout(amount, selection, runners)
                     : null
                 }
                 disabled={isNotBetting}

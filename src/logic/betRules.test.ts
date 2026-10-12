@@ -8,14 +8,14 @@ import {
   totalBetAmount,
   canSubmitBets,
 } from "./betRules";
-import type { Runner, Bet } from "../types/game";
+import type { Runner, BetDraft } from "../types/game";
 
 const phoenix: Runner = { id: "phoenix", name: "フェニックス", odds: 1.2 };
 const storm: Runner = { id: "storm", name: "ストームエッジ", odds: 2.0 };
 const thunder: Runner = { id: "thunder", name: "サンダーボルト", odds: 3.0 };
 
 // テスト用のベットを簡単に作るヘルパー
-function makeBet(overrides: Partial<Bet> = {}): Bet {
+function makeBet(overrides: Partial<BetDraft> = {}): BetDraft {
   return {
     id: "bet-1",
     betType: "WIN",

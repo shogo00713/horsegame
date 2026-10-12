@@ -8,7 +8,7 @@
  *            既に成立しているベットの場合はそのまま(編集内容を保持して)閉じる
  */
 
-import type { BetType, Runner, Bet, Conditions } from "../types/game";
+import type { BetType, Runner, BetDraft, Conditions } from "../types/game";
 import { isOrderedBetType, isValidBet, betTypeLabel } from "../logic/betRules";
 import styles from "./BetEditor.module.css";
 import RunnerRow from "./RunnerRow";
@@ -32,7 +32,7 @@ const BET_TYPES: BetType[] = [
 ];
 
 type BetEditorProps = {
-  bet: Bet;
+  bet: BetDraft;
   runners: Runner[];
   conditions?: Conditions; // デバッグ表示用(開発時のみ使う)
   onChangeBetType: (betType: BetType) => void;

@@ -12,7 +12,7 @@ import type {
   Phase,
   Runner,
   RaceHistory,
-  Bet,
+  BetDraft,
   BetResult,
   Conditions,
 } from "../types/game";
@@ -34,7 +34,7 @@ import {
 const MAX_BETS = 5;
 
 // 空のベットを1件作る
-function createEmptyBet(): Bet {
+function createEmptyBet(): BetDraft {
   return {
     id: crypto.randomUUID(),
     betType: "WIN",
@@ -97,7 +97,7 @@ export function useHorseGame() {
   const [phase, setPhase] = useState<Phase>("BETTING");
   const [payout, setPayout] = useState(0);
   const [betResults, setBetResults] = useState<BetResult[]>([]);
-  const [bets, setBets] = useState<Bet[]>([]);
+  const [bets, setBets] = useState<BetDraft[]>([]);
   const [result, setResult] = useState<Runner[]>([]);
   const [previousResult, setPreviousResult] = useState<Runner[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
@@ -118,7 +118,7 @@ export function useHorseGame() {
   /**
    * 新たにベットを1件追加する関数
    *
-   * @returns 作成したベットのID (0~最大サイズ-1)
+   * @returns 作成したベットのID
    */
   function addBet(): string | null {
     if (bets.length >= MAX_BETS) return null;
@@ -255,6 +255,7 @@ export function useHorseGame() {
     // ベットごとに払い戻しを計算する
     const results: BetResult[] = bets.map((bet) => {
       const selection = buildBetSelection(bet.betType, bet.selectedRunners);
+      if (!selection) return { bet, payout: 0 }; // 選択が不正で通ってきている場合は0円払い戻し
       const betPayout = calculatePayout(
         Number(bet.betstr),
         selection,

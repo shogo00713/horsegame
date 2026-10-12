@@ -1,42 +1,36 @@
+/* 画面全体のスタイルを決める */
 .app {
   min-height: 100vh;
   padding: clamp(12px, 2vw, 24px);
   display: flex;
   flex-direction: column;
-  align-items: stretch;
 }
 
+/* ヘッダーとモーダル以外のスタイルを決める */
 .main {
   width: 100%;
   max-width: 2200px;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: clamp(32px, 5vw, 72px);
   margin: 20px auto 32px;
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 4fr);
+  gap: clamp(32px, 5vw, 72px);
 }
 
-/* 左右のカードが並べられない幅(半分の画面・スマホ)では、縦に積む */
+/* 左右のカードが並べられない幅(半分の画面・スマホなど)では、main部分を縦に積む */
 @media (max-width: 1100px) {
   .main {
     grid-template-columns: minmax(0, 1fr);
   }
 }
 
-.leftPanel,
-.rightPanel {
-  min-width: 0;
-}
-
 .leftPanel {
   display: flex;
   flex-direction: column;
-  gap: 18px;
 }
 
 .rightPanel {
   display: flex;
   flex-direction: column;
-  gap: 24px;
 }
 
 .errorMessage {
