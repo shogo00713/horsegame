@@ -117,44 +117,28 @@ export function isValidBet(bet: BetDraft): boolean {
 }
 
 /**
- * ベットボタンを押していいかどうかを判定する関数
+ * 「BETする」を押せない理由を返す関数 (押してよければ null)
  *
- * 次の条件を全て満たすことが必要
- * * ベットが1件以上
+ * 次の条件を上から順に調べて、最初に当てはまったものの理由を返す
+ * * ベットが1件以上ある
  * * 全てが正しいベットの形式(馬の数・金額が正しい)をしている
  * * 合計金額が所持金を超えていない
  *
- * @param bets 各賭けの配列
- * @param money 所持金
- * @returns boolean
- */
-export function canSubmitBets(bets: BetDraft[], money: number): boolean {
-  return (
-    bets.length > 0 && bets.every(isValidBet) && totalBetAmount(bets) <= money
-  );
-}
-
-/**
- * 選択したベットが正しいかどうかを総合的に判定する関数
- *
  * @param bets 選んだベットの配列
- * @param total ベットの合計金額
  * @param money 所持金額
- * @returns エラーメッセージ、またはnull
+ * @returns 押せない理由(日本語のメッセージ)、または null(押してよい)
  */
 export function validateBetRules(
   bets: BetDraft[],
-  total: number,
   money: number,
 ): string | null {
-  // 入力のエラーチェック
   if (bets.length === 0) {
     return "ベットを1件以上追加してください。";
   }
   if (!bets.every(isValidBet)) {
     return "馬の選択か金額が未入力のベットがあります。";
   }
-  if (total > money) {
+  if (totalBetAmount(bets) > money) {
     return "所持金が不足しています。";
   }
   return null;

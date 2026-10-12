@@ -17,7 +17,7 @@ export default function Header({
       <div className={styles.headerInner}>
         <h1 className={styles.headerTitle}>競馬ゲーム</h1>
 
-        <nav className={styles.actions} aria-label="ナビゲーション">
+        <div className={styles.actions}>
           <button type="button" className={styles.action} onClick={onOpenMenu}>
             <Icon name="menu" /> メニュー
           </button>
@@ -28,11 +28,11 @@ export default function Header({
           >
             <Icon name="history" /> 履歴
           </button>
-        </nav>
+        </div>
 
-        <h1 className={styles.headerSub}>
+        <p className={styles.headerSub}>
           所持金 : <span className={styles.money}>{money}</span> 円
-        </h1>
+        </p>
       </div>
     </header>
   );

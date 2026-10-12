@@ -1,13 +1,23 @@
-/* 全アプリ共通のカラー変数・リセット(白地・墨・細い罫線の誌面風) */
+/*
+index.css
+
+最も基本的なレベルでのスタイルを決めている
+ここで決めたことは、アプリ全体の共通設定として働く
+
+- 変数の定義
+- 各構成要素の基本的なスタイル など
+*/
+
+/* 全アプリ共通のカラー変数 */
 :root {
   --bg: #ffffff;
   --bg-card: #ffffff;
-  --text: #16161a; /* 墨 */
+  --text: #16161a;
   --muted: #6f6c68;
-  --border: #dcd8d2; /* 細い罫線 */
-  --accent: #16161a; /* 主役の操作は墨一色 */
+  --border: #dcd8d2;
+  --accent: #16161a;
   --accent-contrast: #ffffff;
-  --shu: #b3261e; /* 朱。的中・自分のBETなど、ここぞの強調だけに使う */
+  --shu: #b3261e;
   --selected-bg: #f6f2ec;
   --selected-border: #16161a;
   --danger: #b3261e;
@@ -15,6 +25,7 @@
   --radius: 0;
 }
 
+/* ダークモードのカラー変数 */
 :root[data-theme="dark"] {
   --bg: #121214;
   --bg-card: #121214;
@@ -30,16 +41,18 @@
   --danger-bg: rgba(255, 122, 107, 0.12);
 }
 
+/* 全要素の幅・高さに padding と border を含める  */
 * {
   box-sizing: border-box;
 }
 
-/* 横スクロールが出ないようにする(はみ出した分は切り捨て。sticky には影響しない) */
+/* 横スクロールが出ないようにする */
 html,
 body {
   overflow-x: clip;
 }
 
+/* 画面全体のスタイルを決める (最も基礎的な設定として、子に流す) */
 body {
   margin: 0;
   color: var(--text);
@@ -51,16 +64,14 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-a {
-  color: inherit;
-}
-
+/* 各パーツのフォントは親要素のフォントを継承する */
 button,
 input,
 select {
   font-family: inherit;
 }
 
+/* ボタンの基本的なスタイル */
 button {
   appearance: none;
   border: 1px solid var(--border);
@@ -79,9 +90,8 @@ button {
     border-color 160ms ease;
 }
 
+/** 無効なボタンのスタイル  */
 button:disabled {
-  cursor: not-allowed;
   opacity: 0.5;
-  transform: none;
   pointer-events: none;
 }

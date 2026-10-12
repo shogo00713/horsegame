@@ -7,15 +7,15 @@
 
 CSSの数値は、**「何を基準にするか」**で分類すると整理できる。
 
-| 基準 | 単位 | 一言でいうと |
-|---|---|---|
-| 固定 | `px` | 画面に対して固定の大きさ |
-| **文字の大きさ**が基準 | `em` `rem` `ch` `lh` | 文字に合わせて伸縮する |
-| **画面(ビューポート)**が基準 | `vw` `vh` `dvh` `vmin` | ブラウザ窓の大きさに合わせる |
-| **親・周りの要素**が基準 | `%` `fr` | 親の大きさ・余りの配分に合わせる |
-| **コンテナ**が基準 | `cqw` `cqi` | 指定した親の大きさに合わせる(新しめ) |
-| 単位なし | `1.6` `0` `1` | 倍率・個数・順序などの数 |
-| **計算で組み合わせ** | `calc()` `min()` `max()` `clamp()` | 上のものを混ぜる |
+| 基準                         | 単位                               | 一言でいうと                         |
+| ---------------------------- | ---------------------------------- | ------------------------------------ |
+| 固定                         | `px`                               | 画面に対して固定の大きさ             |
+| **文字の大きさ**が基準       | `em` `rem` `ch` `lh`               | 文字に合わせて伸縮する               |
+| **画面(ビューポート)**が基準 | `vw` `vh` `dvh` `vmin`             | ブラウザ窓の大きさに合わせる         |
+| **親・周りの要素**が基準     | `%` `fr`                           | 親の大きさ・余りの配分に合わせる     |
+| **コンテナ**が基準           | `cqw` `cqi`                        | 指定した親の大きさに合わせる(新しめ) |
+| 単位なし                     | `1.6` `0` `1`                      | 倍率・個数・順序などの数             |
+| **計算で組み合わせ**         | `calc()` `min()` `max()` `clamp()` | 上のものを混ぜる                     |
 
 ---
 
@@ -41,8 +41,13 @@ border: 1px solid var(--border);
 **「その要素自身の `font-size`」の何倍か**。ただし `font-size` プロパティ自身に使うときだけは、**親の** `font-size` が基準になる。
 
 ```css
-.box { font-size: 20px; padding: 1em; }   /* padding は 20px */
-.box span { font-size: 1.5em; }           /* 親の 20px × 1.5 = 30px */
+.box {
+  font-size: 20px;
+  padding: 1em;
+} /* padding は 20px */
+.box span {
+  font-size: 1.5em;
+} /* 親の 20px × 1.5 = 30px */
 ```
 
 - **向いている用途**:文字の大きさに連動して余白や幅を変えたい部品(ボタンの `padding`、`letter-spacing` など)。
@@ -53,8 +58,12 @@ border: 1px solid var(--border);
 **`<html>` の `font-size`**(通常 16px)の何倍か。入れ子の影響を受けないので、文字サイズの指定に向いている。
 
 ```css
-html { font-size: 16px; }
-h2 { font-size: 1.5rem; }  /* 24px */
+html {
+  font-size: 16px;
+}
+h2 {
+  font-size: 1.5rem;
+} /* 24px */
 ```
 
 ### `ch`
@@ -69,26 +78,30 @@ h2 { font-size: 1.5rem; }  /* 24px */
 
 ### このコードでの実例
 
-| 書き方 | 意味 | 場所 |
-|---|---|---|
-| `width: 4.5em` | 文字の大きさの4.5倍(ラベルの列幅) | Tutorial / GuideContent の `dt` |
-| `width: 3.5em` | オッズ列の幅(文字サイズに連動) | [EntryList.module.css:87](../src/components/EntryList.module.css) |
-| `letter-spacing: 0.4em` | 字間を文字の0.4倍 | ResultPanel、BetPanel の見出し |
+| 書き方                  | 意味                              | 場所                                                              |
+| ----------------------- | --------------------------------- | ----------------------------------------------------------------- |
+| `width: 4.5em`          | 文字の大きさの4.5倍(ラベルの列幅) | Tutorial / GuideContent の `dt`                                   |
+| `width: 3.5em`          | オッズ列の幅(文字サイズに連動)    | [EntryList.module.css:87](../src/components/EntryList.module.css) |
+| `letter-spacing: 0.4em` | 字間を文字の0.4倍                 | ResultPanel、BetPanel の見出し                                    |
 
 ---
 
 ## 3. 画面(ビューポート)が基準:`vw` / `vh` ほか
 
-| 単位 | 意味 |
-|---|---|
-| `1vw` | 画面幅の1% |
-| `1vh` | 画面高さの1% |
-| `vmin` / `vmax` | 縦横のうち小さい/大きいほうの1% |
+| 単位                      | 意味                                     |
+| ------------------------- | ---------------------------------------- |
+| `1vw`                     | 画面幅の1%                               |
+| `1vh`                     | 画面高さの1%                             |
+| `vmin` / `vmax`           | 縦横のうち小さい/大きいほうの1%          |
 | **`svh` / `lvh` / `dvh`** | スマホのアドレスバーを考慮した高さ(後述) |
 
 ```css
-.app { min-height: 100vh; }          /* 画面いっぱい */
-.dialog { max-height: 88vh; }        /* 画面の88%まで */
+.app {
+  min-height: 100vh;
+} /* 画面いっぱい */
+.dialog {
+  max-height: 88vh;
+} /* 画面の88%まで */
 ```
 
 ### 落とし穴
@@ -105,17 +118,17 @@ h2 { font-size: 1.5rem; }  /* 24px */
 
 **「何の何%か」はプロパティごとに違う**。ここが一番の落とし穴。
 
-| プロパティ | `%` の基準 |
-|---|---|
-| `width` / `max-width` | 親(包含ブロック)の**幅** |
-| `height` | 親の**高さ**(ただし親の高さが確定している場合のみ) |
-| `padding` / `margin` | 親の**幅**(縦方向でも、幅が基準) |
-| `font-size` | 親の `font-size` |
-| `line-height` | その要素自身の `font-size` |
-| `top` / `left` など(`position` 指定時) | 位置の基準になる親の高さ/幅 |
-| **`transform: translate()`** | **その要素自身**の幅/高さ |
-| `border-radius` | その要素自身の幅/高さ |
-| `flex-basis` | flex コンテナの主軸方向の長さ |
+| プロパティ                             | `%` の基準                                         |
+| -------------------------------------- | -------------------------------------------------- |
+| `width` / `max-width`                  | 親(包含ブロック)の**幅**                           |
+| `height`                               | 親の**高さ**(ただし親の高さが確定している場合のみ) |
+| `padding` / `margin`                   | 親の**幅**(縦方向でも、幅が基準)                   |
+| `font-size`                            | 親の `font-size`                                   |
+| `line-height`                          | その要素自身の `font-size`                         |
+| `top` / `left` など(`position` 指定時) | 位置の基準になる親の高さ/幅                        |
+| **`transform: translate()`**           | **その要素自身**の幅/高さ                          |
+| `border-radius`                        | その要素自身の幅/高さ                              |
+| `flex-basis`                           | flex コンテナの主軸方向の長さ                      |
 
 ### 落とし穴
 
@@ -127,15 +140,15 @@ h2 { font-size: 1.5rem; }  /* 24px */
 
 ## 5. 単位なしの数
 
-| 場所 | 例 | 意味 |
-|---|---|---|
-| `line-height` | `1.6` | **文字サイズの倍率**(推奨の書き方) |
-| `flex` | `1 1 0` | 伸びる比率・縮む比率・基準サイズ |
-| `opacity` | `0.5` | 0〜1 |
-| `z-index` | `100` | 重なり順(整数) |
-| `font-weight` | `500` | 太さ(100〜900) |
-| `order` | `3` | 並び順 |
-| **`0`** | `margin: 0` | **長さのゼロだけは、単位を省略できる** |
+| 場所          | 例          | 意味                                   |
+| ------------- | ----------- | -------------------------------------- |
+| `line-height` | `1.6`       | **文字サイズの倍率**(推奨の書き方)     |
+| `flex`        | `1 1 0`     | 伸びる比率・縮む比率・基準サイズ       |
+| `opacity`     | `0.5`       | 0〜1                                   |
+| `z-index`     | `100`       | 重なり順(整数)                         |
+| `font-weight` | `500`       | 太さ(100〜900)                         |
+| `order`       | `3`         | 並び順                                 |
+| **`0`**       | `margin: 0` | **長さのゼロだけは、単位を省略できる** |
 
 ### 落とし穴
 
@@ -151,7 +164,7 @@ h2 { font-size: 1.5rem; }  /* 24px */
 グリッドで、**固定サイズなどを引いた余りを、比率で分ける**単位。
 
 ```css
-grid-template-columns: 200px 1fr 2fr;  /* 200px固定、残りを 1:2 */
+grid-template-columns: 200px 1fr 2fr; /* 200px固定、残りを 1:2 */
 ```
 
 ### 重要:`1fr` は `minmax(auto, 1fr)` の略
@@ -159,28 +172,28 @@ grid-template-columns: 200px 1fr 2fr;  /* 200px固定、残りを 1:2 */
 最小値が `auto`(中身の幅)なので、**中身が長いとカラムが突き破られる**。これを避けるのが `minmax(0, 1fr)`。
 
 ```css
-grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);  /* App.module.css:13 */
+grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); /* App.module.css:13 */
 ```
 
 ### トラックのよく使う関数
 
-| 書き方 | 意味 |
-|---|---|
-| `repeat(4, 1fr)` | 1frを4つ |
-| `minmax(220px, 1fr)` | 最小220px、最大1fr |
+| 書き方                                  | 意味                                                               |
+| --------------------------------------- | ------------------------------------------------------------------ |
+| `repeat(4, 1fr)`                        | 1frを4つ                                                           |
+| `minmax(220px, 1fr)`                    | 最小220px、最大1fr                                                 |
 | `repeat(auto-fill, minmax(200px, 1fr))` | **メディアクエリなしの自動レスポンシブ**(幅に収まる分だけ列を作る) |
 
 ---
 
 ## 7. キーワード(数値ではないが、サイズを決める)
 
-| 値 | 意味 |
-|---|---|
-| `auto` | 状況に応じて自動(プロパティごとに挙動が違う) |
-| `min-content` | 中身が折り返せるだけ折り返した最小幅 |
-| `max-content` | 中身が折り返さずに並んだ最大幅 |
-| `fit-content` | `max-content` だが、親の幅を超えない |
-| `stretch` | 余白を除いて、親いっぱいに広げる |
+| 値            | 意味                                         |
+| ------------- | -------------------------------------------- |
+| `auto`        | 状況に応じて自動(プロパティごとに挙動が違う) |
+| `min-content` | 中身が折り返せるだけ折り返した最小幅         |
+| `max-content` | 中身が折り返さずに並んだ最大幅               |
+| `fit-content` | `max-content` だが、親の幅を超えない         |
+| `stretch`     | 余白を除いて、親いっぱいに広げる             |
 
 ---
 
@@ -189,8 +202,8 @@ grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);  /* App.module.css:13 */
 ### `calc()` ― 異なる単位を混ぜる
 
 ```css
-height: calc(100% - 28px);                       /* HistoryModal.module.css:209 */
-height: calc(var(--row-h) - 12px);               /* ResultPanel.module.css:157 */
+height: calc(100% - 28px); /* HistoryModal.module.css:209 */
+height: calc(var(--row-h) - 12px); /* ResultPanel.module.css:157 */
 ```
 
 **ルール**
@@ -203,8 +216,8 @@ height: calc(var(--row-h) - 12px);               /* ResultPanel.module.css:157 *
 ### `min()` / `max()` ― 小さいほう・大きいほうを採用
 
 ```css
-width: min(1280px, 100%);    /* 1280px を上限に、狭い画面では100% */
-height: min(900px, 92vh);    /* HistoryModal.module.css:15-16 */
+width: min(1280px, 100%); /* 1280px を上限に、狭い画面では100% */
+height: min(900px, 92vh); /* HistoryModal.module.css:15-16 */
 ```
 
 - `width: min(1280px, 100%)` は、`width: 100%; max-width: 1280px` と同じ意味を、1行で書いたもの。
@@ -213,8 +226,8 @@ height: min(900px, 92vh);    /* HistoryModal.module.css:15-16 */
 ### `clamp(最小, 好み, 最大)` ― 範囲に収める
 
 ```css
-padding: clamp(12px, 2vw, 24px);              /* App.module.css:3 */
-font-size: clamp(22px, 2.4vw, 30px);          /* Header.module.css:21 */
+padding: clamp(12px, 2vw, 24px); /* App.module.css:3 */
+font-size: clamp(22px, 2.4vw, 30px); /* Header.module.css:21 */
 ```
 
 - 意味は `max(最小, min(好み, 最大))`。
@@ -222,6 +235,7 @@ font-size: clamp(22px, 2.4vw, 30px);          /* Header.module.css:21 */
 - 真ん中(好み)に `vw` を使うのが定番。
 
 > アクセシビリティの注意:`vw` だけだと、ブラウザの拡大(ズーム)で文字が大きくならないことがある。推奨は、`rem` を混ぜる書き方。
+>
 > ```css
 > font-size: clamp(1rem, 0.8rem + 1vw, 1.5rem);
 > ```
@@ -230,7 +244,7 @@ font-size: clamp(22px, 2.4vw, 30px);          /* Header.module.css:21 */
 
 ```tsx
 // ResultPanel.tsx:213
-transform: `translateY(calc(${rank} * (var(--row-h) + var(--row-gap))))`
+transform: `translateY(calc(${rank} * (var(--row-h) + var(--row-gap))))`;
 ```
 
 **単位なしの数(順位) × (長さ + 長さ)** という計算を、CSS変数を使って組み立てている。JS が `rank` だけを渡し、CSS が実際の長さを計算する分業。
@@ -240,8 +254,12 @@ transform: `translateY(calc(${rank} * (var(--row-h) + var(--row-gap))))`
 ## 9. コンテナ基準:`cqw` / `cqi`(新しめ)
 
 ```css
-.card-wrapper { container-type: inline-size; }
-.card h2 { font-size: clamp(1rem, 5cqi, 2rem); }  /* 親(コンテナ)の幅の5% */
+.card-wrapper {
+  container-type: inline-size;
+}
+.card h2 {
+  font-size: clamp(1rem, 5cqi, 2rem);
+} /* 親(コンテナ)の幅の5% */
 ```
 
 画面幅ではなく、**部品が置かれた親の幅**で調整できる。同じ部品をサイドバーにもメインにも置く場合に、本領を発揮する。
@@ -250,29 +268,29 @@ transform: `translateY(calc(${rank} * (var(--row-h) + var(--row-gap))))`
 
 ## 10. 数値を使うその他の単位(参考)
 
-| 種類 | 単位 | 使いどころ |
-|---|---|---|
-| 時間 | `s` `ms` | `transition: 0.7s`、`160ms` |
-| 角度 | `deg` `turn` `rad` | `rotate(45deg)` |
-| 割合 | `%` | `opacity: 50%`、`rgb(0 0 0 / 55%)` |
+| 種類 | 単位               | 使いどころ                         |
+| ---- | ------------------ | ---------------------------------- |
+| 時間 | `s` `ms`           | `transition: 0.7s`、`160ms`        |
+| 角度 | `deg` `turn` `rad` | `rotate(45deg)`                    |
+| 割合 | `%`                | `opacity: 50%`、`rgb(0 0 0 / 55%)` |
 
 ---
 
 ## 11. 使い分けの目安
 
-| やりたいこと | 向いている書き方 |
-|---|---|
-| 罫線の太さ | `1px` |
-| 文字サイズ | `rem`、または `clamp(rem, ..., rem)` |
-| 文字に連動する余白・幅 | `em` |
-| ページ全体の最低の高さ | `min-height: 100dvh` |
-| 横幅いっぱい + 上限あり | `width: min(1280px, 100%)` |
-| 画面幅に応じて滑らかに変わる大きさ | `clamp()` |
-| 余りを比率で分ける | `fr`(`minmax(0, 1fr)` で安全に) |
-| 列数を自動で変える | `repeat(auto-fill, minmax(○px, 1fr))` |
-| 行間 | 単位なし(`1.6`) |
-| 上下左右中央(絶対配置) | `top: 50%` + `transform: translateY(-50%)` |
-| メディアクエリの閾値 | `px`、または `em` |
+| やりたいこと                       | 向いている書き方                           |
+| ---------------------------------- | ------------------------------------------ |
+| 罫線の太さ                         | `1px`                                      |
+| 文字サイズ                         | `rem`、または `clamp(rem, ..., rem)`       |
+| 文字に連動する余白・幅             | `em`                                       |
+| ページ全体の最低の高さ             | `min-height: 100dvh`                       |
+| 横幅いっぱい + 上限あり            | `width: min(1280px, 100%)`                 |
+| 画面幅に応じて滑らかに変わる大きさ | `clamp()`                                  |
+| 余りを比率で分ける                 | `fr`(`minmax(0, 1fr)` で安全に)            |
+| 列数を自動で変える                 | `repeat(auto-fill, minmax(○px, 1fr))`      |
+| 行間                               | 単位なし(`1.6`)                            |
+| 上下左右中央(絶対配置)             | `top: 50%` + `transform: translateY(-50%)` |
+| メディアクエリの閾値               | `px`、または `em`                          |
 
 > メディアクエリの中では、`em` も `rem` も「ブラウザの初期のフォントサイズ(通常16px)」が基準になる(CSSで `html { font-size }` を変えても影響されない)。
 
@@ -295,14 +313,14 @@ transform: `translateY(calc(${rank} * (var(--row-h) + var(--row-gap))))`
 
 ## このコードで実物を見られる場所
 
-| 話題 | 場所 |
-|---|---|
+| 話題                        | 場所                                                                                                                                                                    |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `clamp` + `vw` で流体サイズ | [App.module.css:3](../src/App.module.css)、[Header.module.css:21](../src/components/Header.module.css)、[BetPanel.module.css:80](../src/components/BetPanel.module.css) |
-| `minmax(0, 1fr)` | [App.module.css:13](../src/App.module.css) |
-| `min()` で上限つき幅 | [HistoryModal.module.css:15](../src/components/HistoryModal.module.css) |
-| `calc` で%とpxを混ぜる | [HistoryModal.module.css:209](../src/components/HistoryModal.module.css) |
-| `calc` + CSS変数 | [ResultPanel.module.css:157](../src/components/ResultPanel.module.css)、[ResultPanel.tsx:213](../src/components/ResultPanel.tsx) |
-| `em` で列幅 | [EntryList.module.css:87](../src/components/EntryList.module.css) |
-| `top: 50%` + `translate` | [RunnerRow.module.css:41](../src/components/RunnerRow.module.css) |
-| 単位なしの `line-height` | [index.css:49](../src/index.css) |
-| `vh`(スマホで要注意) | [App.module.css:2](../src/App.module.css)、[Modal.module.css:16](../src/components/Modal.module.css) |
+| `minmax(0, 1fr)`            | [App.module.css:13](../src/App.module.css)                                                                                                                              |
+| `min()` で上限つき幅        | [HistoryModal.module.css:15](../src/components/HistoryModal.module.css)                                                                                                 |
+| `calc` で%とpxを混ぜる      | [HistoryModal.module.css:209](../src/components/HistoryModal.module.css)                                                                                                |
+| `calc` + CSS変数            | [ResultPanel.module.css:157](../src/components/ResultPanel.module.css)、[ResultPanel.tsx:213](../src/components/ResultPanel.tsx)                                        |
+| `em` で列幅                 | [EntryList.module.css:87](../src/components/EntryList.module.css)                                                                                                       |
+| `top: 50%` + `translate`    | [RunnerRow.module.css:41](../src/components/RunnerRow.module.css)                                                                                                       |
+| 単位なしの `line-height`    | [index.css:49](../src/index.css)                                                                                                                                        |
+| `vh`(スマホで要注意)        | [App.module.css:2](../src/App.module.css)、[Modal.module.css:16](../src/components/Modal.module.css)                                                                    |

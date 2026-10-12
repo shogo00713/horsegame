@@ -29,7 +29,7 @@ type BetPanelProps = {
   conditions?: Conditions; // デバッグ表示用(開発時のみ使う)
   maxBets: number;
   totalBetAmount: number;
-  canSubmit: boolean;
+  submitBlockReason: string | null; // 「BETする」を押せない理由(押してよければ null)
 
   onAddBet: () => string | null;
   onRemoveBet: (id: string) => void;
@@ -46,7 +46,7 @@ export default function BetPanel({
   conditions,
   maxBets,
   totalBetAmount,
-  canSubmit,
+  submitBlockReason,
   onAddBet,
   onRemoveBet,
   onChangeBetType,
@@ -58,7 +58,9 @@ export default function BetPanel({
   const [editingBetId, setEditingBetId] = useState<string | null>(null);
 
   const isNotBetting = phase !== "BETTING";
-  const isSubmitDisabled = isNotBetting || !canSubmit;
+  const isSubmitDisabled = isNotBetting || submitBlockReason !== null;
+  // 押せない理由は、ベット受付中だけ見せる(抽選中は所持金が減っているため、理由として不適切)
+  const submitHint = isNotBetting ? null : submitBlockReason;
   const editingBet = bets.find((b) => b.id === editingBetId) ?? null;
 
   function handleAddClick() {
@@ -156,6 +158,11 @@ export default function BetPanel({
         <span>合計BET額</span>
         <span>¥{totalBetAmount}</span>
       </div>
+
+      {/* 空のときも高さは確保しておく(理由の出入りでレイアウトが動かないように) */}
+      <p className={styles.submitHint} aria-live="polite">
+        {submitHint}
+      </p>
 
       <button
         className={styles.betPanelSubmitButton}

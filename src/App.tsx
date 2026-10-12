@@ -24,10 +24,9 @@ export default function App() {
     betResults,
     result,
     conditions,
-    errorMessage,
     raceHistory,
     canResetMoney,
-    canSubmit,
+    submitBlockReason,
     totalBetAmount,
     maxBets,
     addBet,
@@ -102,12 +101,6 @@ export default function App() {
         </div>
 
         <div className={styles.rightPanel}>
-          {errorMessage && (
-            <p className={styles.errorMessage} aria-live="polite">
-              {errorMessage}
-            </p>
-          )}
-
           {/* 払い戻し or ベットパネル */}
           {phase === "PAYOUT" ? (
             <PayoutPanel
@@ -124,7 +117,7 @@ export default function App() {
               conditions={conditions}
               maxBets={maxBets}
               totalBetAmount={totalBetAmount}
-              canSubmit={canSubmit}
+              submitBlockReason={submitBlockReason}
               onAddBet={addBet}
               onRemoveBet={removeBet}
               onChangeBetType={changeBetType}

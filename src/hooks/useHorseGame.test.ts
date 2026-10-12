@@ -160,13 +160,15 @@ describe("useHorseGame", () => {
     });
   });
 
-  describe("canSubmit(ベット全件のバリデーション)", () => {
-    it("ベットが1件も無ければ、提出できない", () => {
+  describe("submitBlockReason(BETする を押せない理由)", () => {
+    it("ベットが1件も無ければ、追加を促す理由になる", () => {
       const { result } = renderHook(() => useHorseGame());
-      expect(result.current.canSubmit).toBe(false);
+      expect(result.current.submitBlockReason).toBe(
+        "ベットを1件以上追加してください。",
+      );
     });
 
-    it("馬を選び、金額も入っていれば提出できる", () => {
+    it("馬を選び、金額も入っていれば、理由は無い(null)", () => {
       const { result } = renderHook(() => useHorseGame());
       const id = addBetAndGetId(result);
 
@@ -174,10 +176,19 @@ describe("useHorseGame", () => {
         result.current.toggleRunner(id, phoenix);
       });
 
-      expect(result.current.canSubmit).toBe(true);
+      expect(result.current.submitBlockReason).toBeNull();
     });
 
-    it("2件目が未入力のままだと、全体として提出できない", () => {
+    it("馬を選んでいないベットがあれば、未入力の理由になる", () => {
+      const { result } = renderHook(() => useHorseGame());
+      addBetAndGetId(result); // 馬を選ばないまま
+
+      expect(result.current.submitBlockReason).toBe(
+        "馬の選択か金額が未入力のベットがあります。",
+      );
+    });
+
+    it("2件目が未入力のままだと、全体として押せない", () => {
       const { result } = renderHook(() => useHorseGame());
       const firstId = addBetAndGetId(result);
 
@@ -186,10 +197,26 @@ describe("useHorseGame", () => {
       });
       addBetAndGetId(result); // 2件目は馬を選ばないまま
 
-      expect(result.current.canSubmit).toBe(false);
+      expect(result.current.submitBlockReason).toBe(
+        "馬の選択か金額が未入力のベットがあります。",
+      );
     });
 
-    it("1件ずつは所持金以内でも、合計が所持金を超えていれば提出できない", () => {
+    it("金額が0円なら、未入力の理由になる", () => {
+      const { result } = renderHook(() => useHorseGame());
+      const id = addBetAndGetId(result);
+
+      act(() => {
+        result.current.toggleRunner(id, phoenix);
+        result.current.changeBetAmount(id, "0");
+      });
+
+      expect(result.current.submitBlockReason).toBe(
+        "馬の選択か金額が未入力のベットがあります。",
+      );
+    });
+
+    it("1件ずつは所持金以内でも、合計が所持金を超えていれば、所持金不足の理由になる", () => {
       const { result } = renderHook(() => useHorseGame());
       const firstId = addBetAndGetId(result);
 
@@ -205,7 +232,7 @@ describe("useHorseGame", () => {
       });
 
       // 初期所持金5000円に対して、3000+3000=6000円は超過
-      expect(result.current.canSubmit).toBe(false);
+      expect(result.current.submitBlockReason).toBe("所持金が不足しています。");
     });
   });
 
@@ -282,20 +309,18 @@ describe("useHorseGame", () => {
   });
 
   describe("go", () => {
-    it("ベットが1件も無いと、エラーメッセージが出る", () => {
+    it("ベットが1件も無いと、レースは始まらない", () => {
       const { result } = renderHook(() => useHorseGame());
 
       act(() => {
         result.current.go();
       });
 
-      expect(result.current.errorMessage).toBe(
-        "ベットを1件以上追加してください。",
-      );
       expect(result.current.phase).toBe("BETTING");
+      expect(result.current.money).toBe(5000);
     });
 
-    it("賭ける金額が0以下なら、エラーメッセージが出る", () => {
+    it("賭ける金額が0以下なら、レースは始まらない", () => {
       const { result } = renderHook(() => useHorseGame());
       const id = addBetAndGetId(result);
 
@@ -307,13 +332,11 @@ describe("useHorseGame", () => {
         result.current.go();
       });
 
-      expect(result.current.errorMessage).toBe(
-        "馬の選択か金額が未入力のベットがあります。",
-      );
       expect(result.current.phase).toBe("BETTING");
+      expect(result.current.money).toBe(5000);
     });
 
-    it("合計金額が所持金より多いと、エラーメッセージが出る", () => {
+    it("合計金額が所持金より多いと、レースは始まらない", () => {
       const { result } = renderHook(() => useHorseGame());
       const id = addBetAndGetId(result);
 
@@ -325,8 +348,8 @@ describe("useHorseGame", () => {
         result.current.go();
       });
 
-      expect(result.current.errorMessage).toBe("所持金が不足しています。");
       expect(result.current.phase).toBe("BETTING");
+      expect(result.current.money).toBe(5000);
     });
   });
 

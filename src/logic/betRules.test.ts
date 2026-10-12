@@ -6,7 +6,7 @@ import {
   canResetMoney,
   isValidBet,
   totalBetAmount,
-  canSubmitBets,
+  validateBetRules,
 } from "./betRules";
 import type { Runner, BetDraft } from "../types/game";
 
@@ -94,27 +94,43 @@ describe("totalBetAmount", () => {
   });
 });
 
-describe("canSubmitBets", () => {
-  it("1件以上・全件成立・合計が所持金以内ならtrue", () => {
+describe("validateBetRules", () => {
+  it("1件以上・全件成立・合計が所持金以内なら、理由は無い(null)", () => {
     const bets = [makeBet({ betstr: "300" }), makeBet({ betstr: "500" })];
-    expect(canSubmitBets(bets, 1000)).toBe(true);
+    expect(validateBetRules(bets, 1000)).toBeNull();
   });
 
-  it("ベットが1件も無ければfalse", () => {
-    expect(canSubmitBets([], 1000)).toBe(false);
+  it("ベットが1件も無ければ、追加を促す理由が返る", () => {
+    expect(validateBetRules([], 1000)).toBe(
+      "ベットを1件以上追加してください。",
+    );
   });
 
-  it("1件でも不成立(馬・金額未入力)なベットがあればfalse", () => {
+  it("1件でも不成立(馬・金額未入力)なベットがあれば、未入力の理由が返る", () => {
     const bets = [
       makeBet({ betstr: "300" }),
       makeBet({ selectedRunners: [] }), // 馬を選んでいない
     ];
-    expect(canSubmitBets(bets, 1000)).toBe(false);
+    expect(validateBetRules(bets, 1000)).toBe(
+      "馬の選択か金額が未入力のベットがあります。",
+    );
   });
 
-  it("1件ずつは所持金以内でも、合計で所持金を超えていればfalse", () => {
+  it("金額が0円のベットがあれば、未入力の理由が返る", () => {
+    const bets = [makeBet({ betstr: "0" })];
+    expect(validateBetRules(bets, 1000)).toBe(
+      "馬の選択か金額が未入力のベットがあります。",
+    );
+  });
+
+  it("1件ずつは所持金以内でも、合計で所持金を超えていれば、所持金不足の理由が返る", () => {
     const bets = [makeBet({ betstr: "600" }), makeBet({ betstr: "600" })];
-    expect(canSubmitBets(bets, 1000)).toBe(false);
+    expect(validateBetRules(bets, 1000)).toBe("所持金が不足しています。");
+  });
+
+  it("合計がちょうど所持金と同じなら、理由は無い(null)", () => {
+    const bets = [makeBet({ betstr: "500" }), makeBet({ betstr: "500" })];
+    expect(validateBetRules(bets, 1000)).toBeNull();
   });
 
   it("同じ組み合わせ(同じ馬・同じ賭け方)の重複は禁止しない", () => {
@@ -122,7 +138,7 @@ describe("canSubmitBets", () => {
       makeBet({ betType: "WIN", selectedRunners: [phoenix], betstr: "300" }),
       makeBet({ betType: "WIN", selectedRunners: [phoenix], betstr: "300" }),
     ];
-    expect(canSubmitBets(bets, 1000)).toBe(true);
+    expect(validateBetRules(bets, 1000)).toBeNull();
   });
 });
 

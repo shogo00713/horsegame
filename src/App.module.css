@@ -23,6 +23,10 @@
   }
 }
 
+/* 
+左右のパネルのスタイルを決める
+それぞれ1枚のはずだが、flexで縦に積むようにしている
+*/
 .leftPanel {
   display: flex;
   flex-direction: column;
@@ -31,13 +35,4 @@
 .rightPanel {
   display: flex;
   flex-direction: column;
-}
-
-.errorMessage {
-  color: var(--danger);
-  margin-bottom: 12px;
-  font-weight: 600;
-  border: 1px solid var(--danger);
-  background: var(--danger-bg);
-  padding: 10px;
 }

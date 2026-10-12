@@ -31,7 +31,7 @@ function renderBetPanel(
     runners,
     maxBets: 5,
     totalBetAmount: 0,
-    canSubmit: false,
+    submitBlockReason: "ベットを1件以上追加してください。",
     onAddBet: () => "bet-1",
     onRemoveBet: () => {},
     onChangeBetType: () => {},
@@ -94,26 +94,51 @@ describe("BetPanel", () => {
     expect(screen.getByRole("button", { name: "確定" })).toBeInTheDocument();
   });
 
-  it("BETTING中かつcanSubmitならBETするボタンは有効化される", () => {
-    renderBetPanel({ canSubmit: true });
+  it("BETTING中で押せない理由が無ければ、BETするボタンは有効化される", () => {
+    renderBetPanel({ submitBlockReason: null });
 
     expect(screen.getByRole("button", { name: "BETする" })).toBeEnabled();
   });
 
   it("BETTING中でなければBETするボタンは無効化される", () => {
-    renderBetPanel({ canSubmit: true, phase: "DRAWING" });
+    renderBetPanel({ submitBlockReason: null, phase: "DRAWING" });
 
     expect(screen.getByRole("button", { name: "BETする" })).toBeDisabled();
   });
 
-  it("canSubmitがfalseならBETするボタンは無効化される", () => {
-    renderBetPanel({ canSubmit: false });
+  it("押せない理由があれば、BETするボタンは無効化される", () => {
+    renderBetPanel({ submitBlockReason: "所持金が不足しています。" });
 
     expect(screen.getByRole("button", { name: "BETする" })).toBeDisabled();
+  });
+
+  it("BETTING中は、BETするボタンを押せない理由が表示される", () => {
+    renderBetPanel({ submitBlockReason: "所持金が不足しています。" });
+
+    expect(screen.getByText("所持金が不足しています。")).toBeInTheDocument();
+  });
+
+  it("押せない理由が無ければ、理由の表示は出ない", () => {
+    renderBetPanel({ submitBlockReason: null });
+
+    expect(
+      screen.queryByText("所持金が不足しています。"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("BETTING中でなければ、押せない理由は表示しない", () => {
+    renderBetPanel({
+      submitBlockReason: "所持金が不足しています。",
+      phase: "DRAWING",
+    });
+
+    expect(
+      screen.queryByText("所持金が不足しています。"),
+    ).not.toBeInTheDocument();
   });
 
   it("合計金額がある場合、BETするボタンに金額が表示される", () => {
-    renderBetPanel({ canSubmit: true, totalBetAmount: 800 });
+    renderBetPanel({ submitBlockReason: null, totalBetAmount: 800 });
 
     expect(
       screen.getByRole("button", { name: "¥800 でBETする" }),
@@ -149,7 +174,7 @@ describe("BetPanel", () => {
 
   it("BETするボタンで onSubmit が呼ばれる", async () => {
     const onSubmit = vi.fn();
-    renderBetPanel({ canSubmit: true, onSubmit });
+    renderBetPanel({ submitBlockReason: null, onSubmit });
 
     await userEvent.click(screen.getByRole("button", { name: "BETする" }));
 

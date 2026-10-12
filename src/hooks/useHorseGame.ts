@@ -26,7 +26,6 @@ import {
   buildBetSelection,
   canResetMoney,
   totalBetAmount,
-  canSubmitBets,
   validateBetRules,
 } from "../logic/betRules";
 
@@ -100,7 +99,6 @@ export function useHorseGame() {
   const [bets, setBets] = useState<BetDraft[]>([]);
   const [result, setResult] = useState<Runner[]>([]);
   const [previousResult, setPreviousResult] = useState<Runner[]>([]);
-  const [errorMessage, setErrorMessage] = useState("");
   const drawTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [raceHistory, setRaceHistory] = useState<RaceHistory[]>(loadHistory);
   const [raceNo, setRaceNo] = useState<number>(loadRaceNo);
@@ -113,6 +111,9 @@ export function useHorseGame() {
     [],
   );
   // ----------------------------------------------------
+
+  // 「BETする」を押せない理由(押してよければ null)。stateではなく、毎回その場で計算する
+  const submitBlockReason = validateBetRules(bets, money);
 
   // --- ベットに関する操作の関数たち ---
   /**
@@ -232,16 +233,11 @@ export function useHorseGame() {
     // ----- 抽選前 -----
     if (phase !== "BETTING") return;
 
+    // 押せない理由があるときは何もしない(画面ではボタンが無効化されているので、念のためのガード)
+    if (submitBlockReason) return;
+
     // すでにベットは確定、その全額を計算
     const total = totalBetAmount(bets);
-
-    // 入力のエラーチェック
-    setErrorMessage("");
-    const error = validateBetRules(bets, total, money);
-    if (error) {
-      setErrorMessage(error);
-      return;
-    }
 
     // ----- 抽選中 -----
     // 結果と払い戻しはここで確定させておく(画面側は演出としてゆっくり見せるだけ)
@@ -327,10 +323,9 @@ export function useHorseGame() {
     result,
     previousResult,
     conditions,
-    errorMessage,
+    submitBlockReason,
     raceHistory,
     canResetMoney: canResetMoney(phase, money),
-    canSubmit: canSubmitBets(bets, money),
     totalBetAmount: totalBetAmount(bets),
     maxBets: MAX_BETS,
     addBet,
