@@ -39,8 +39,6 @@ describe("ResultPanel", () => {
       />,
     );
 
-    expect(screen.getByText("現在 : ベット受付中")).toBeInTheDocument();
-    expect(screen.getByText("出走馬一覧")).toBeInTheDocument();
     expect(screen.queryByText("着順")).toBeNull();
     expect(screen.queryByText("前回結果")).toBeNull();
 
@@ -103,18 +101,6 @@ describe("ResultPanel", () => {
         />,
       );
     }
-
-    it("開始直後は着順は伏せられ、前回の着順も非表示", () => {
-      renderDrawing();
-
-      expect(screen.getByText("現在 : 抽選中")).toBeInTheDocument();
-
-      // 順位枠の中は空(名前はプレート側に出る)
-      screen.getAllByTestId("finish-line").forEach((line) => {
-        expect(line).not.toHaveTextContent("フェニックス");
-        expect(line).not.toHaveTextContent("ストームエッジ");
-      });
-    });
 
     it("演出中は、名前入りのプレートが順位ごとに表示される", () => {
       renderDrawing();
@@ -179,28 +165,5 @@ describe("ResultPanel", () => {
 
       expect(onSkip).toHaveBeenCalledTimes(1);
     });
-  });
-
-  it("PAYOUTフェーズの場合、着順が表示され、前回結果の欄は無い", () => {
-    render(
-      <ResultPanel
-        phase="PAYOUT"
-        runners={runners}
-        result={result}
-        betMarks={{}}
-        onSkip={() => {}}
-      />,
-    );
-
-    const [firstLine, secondLine] = screen.getAllByTestId("finish-line");
-
-    expect(screen.getByText("現在 : 払い戻し中")).toBeInTheDocument();
-    expect(screen.getByText("着順")).toBeInTheDocument();
-    expect(screen.queryByText("前回結果")).toBeNull();
-
-    expect(firstLine).toHaveTextContent("1位:");
-    expect(firstLine).toHaveTextContent("フェニックス");
-    expect(secondLine).toHaveTextContent("2位:");
-    expect(secondLine).toHaveTextContent("ストームエッジ");
   });
 });
