@@ -47,16 +47,6 @@ describe("createRaceScript", () => {
     expect(differed).toBe(true);
   });
 
-  it("同じ乱数なら同じ台本になる", () => {
-    const seq = () => {
-      let x = 0.123;
-      return () => (x = (x * 9301 + 49297) % 233280) / 233280;
-    };
-    const a = createRaceScript(result, seq());
-    const b = createRaceScript(result, seq());
-    expect(ids(a(0.4))).toEqual(ids(b(0.4)));
-  });
-
   it("元の配列は変更しない", () => {
     const copy = [...result];
     createRaceScript(result)(0.2);

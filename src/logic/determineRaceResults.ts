@@ -1,8 +1,8 @@
 /**
- * レースの順位確定関数たち
+ * 各レースの着順を決定する関数
  *
- * 各レースでは、各馬の強さに基づいて着順を決定する
- * 強さをベースに1頭ずつピックする方式で馬が選ばれる
+ * 馬の強さや調子に応じて、ランダムに着順を決定する
+ * 乱数は Math.random() に基づく
  */
 
 import { Runner, Conditions } from "../types/game";
@@ -11,12 +11,12 @@ import { applyCondition, NORMAL_CONDITION } from "./updateHorseCondition";
 /**
  * ランダムに1頭の馬を選ぶ関数
  *
- * 重みに応じてランダムに1頭の馬を選ぶ
+ * 重みに応じてランダムに1頭の馬を選び、その馬の順位を確定させる
  * Math.random() に基づくランダム選出
  *
- * @param pool
- * @param weighted
- * @returns
+ * @param pool - 選択対象の馬の配列
+ * @param weighted - 馬のそのレースでの強さ
+ * @returns - 選ばれた馬
  */
 export function pickWinnerByOdds(
   pool: Runner[],

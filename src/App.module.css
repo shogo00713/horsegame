@@ -12,7 +12,7 @@
   max-width: 2200px;
   margin: 20px auto 32px;
   display: grid;
-  grid-template-columns: minmax(0, 3fr) minmax(0, 4fr);
+  grid-template-columns: minmax(0, 8fr) minmax(0, 9fr);
   gap: clamp(32px, 5vw, 72px);
 }
 
