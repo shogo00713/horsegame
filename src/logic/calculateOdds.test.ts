@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { marginalWinProbabilities, deriveOdds, RTP_BY_TYPE } from "./calculateOdds";
+import {
+  marginalWinProbabilities,
+  deriveOdds,
+  RTP_BY_TYPE,
+} from "./calculateOdds";
 import { runners } from "../data/runners";
 import { makeFinishOrder } from "./determineRaceResults";
 import { dealConditions } from "./updateHorseCondition";

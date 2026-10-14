@@ -9,7 +9,11 @@
  */
 
 import type { BetType, Runner, BetDraft, Conditions } from "../types/game";
-import { isOrderedBetType, isValidBet, betTypeLabel } from "../logic/checkBetRules";
+import {
+  isOrderedBetType,
+  isValidBet,
+  betTypeLabel,
+} from "../logic/checkBetRules";
 import styles from "./BetEditor.module.css";
 import RunnerRow from "./RunnerRow";
 import { CONDITION_LABELS } from "../logic/updateHorseCondition";

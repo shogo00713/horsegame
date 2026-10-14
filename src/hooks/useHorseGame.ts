@@ -20,7 +20,10 @@ import { makeFinishOrder } from "../logic/determineRaceResults";
 import { calculatePayout } from "../logic/calculatePayout";
 import { MAX_HISTORY } from "../logic/calculateHorseStats";
 import { DRAW_DURATION_MS } from "../logic/controlRaceAnimation";
-import { dealConditions, isValidConditions } from "../logic/updateHorseCondition";
+import {
+  dealConditions,
+  isValidConditions,
+} from "../logic/updateHorseCondition";
 import {
   maxSelectable,
   buildBetSelection,

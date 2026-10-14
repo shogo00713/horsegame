@@ -6,7 +6,11 @@
  * それ以外の賭け方のオッズは、必要となる時のみ計算される
  */
 
-import { applyCondition, DECK_RATIO, NORMAL_CONDITION } from "./updateHorseCondition";
+import {
+  applyCondition,
+  DECK_RATIO,
+  NORMAL_CONDITION,
+} from "./updateHorseCondition";
 import type { BetType, Runner, Condition } from "../types/game";
 
 // 券種ごとの払い戻し率(調子が分からない人が、平均して戻る割合)

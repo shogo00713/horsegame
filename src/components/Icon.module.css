@@ -1,0 +1,10 @@
+/* 馬のアイコン。assets/horse.svg を差し替えれば、ここも変わる */
+.horse {
+  flex: none;
+  width: 36px;
+  height: 28px;
+  background: currentColor;
+  color: var(--muted);
+  -webkit-mask: url("../assets/horse.svg") center / contain no-repeat;
+  mask: url("../assets/horse.svg") center / contain no-repeat;
+}

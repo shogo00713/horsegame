@@ -8,6 +8,7 @@
 import type { Runner } from "../types/game";
 import FrameNumber from "./FrameNumber";
 import styles from "./EntryList.module.css";
+import { HorseIcon } from "./Icon";
 
 type EntryListProps = {
   runners: Runner[];
@@ -32,7 +33,7 @@ export default function EntryList({ runners, lastResult }: EntryListProps) {
         return (
           <div key={runner.id} data-testid="entry-row" className={styles.row}>
             <FrameNumber number={i + 1} />
-            <span className={styles.horse} aria-hidden="true" />
+            <HorseIcon />
             <div className={styles.info}>
               <span className={styles.name}>{runner.name}</span>
               {runner.description && (

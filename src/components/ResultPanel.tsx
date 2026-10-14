@@ -16,6 +16,8 @@ import {
 } from "../logic/controlRaceAnimation";
 import EntryList from "./EntryList";
 import styles from "./ResultPanel.module.css";
+import FrameNumber from "./FrameNumber";
+import { HorseIcon } from "./Icon";
 
 // 親コンポーネントから渡されるprops
 type ResultPanelProps = {
@@ -114,6 +116,10 @@ export default function ResultPanel({
           {/* 今回の着順を表示する部分 */}
           {runners.map((runner, i) => {
             const rank = i + 1;
+            const finisher = result?.[i]; // この順位に入った馬
+            const frameNo = finisher
+              ? runners.findIndex((r) => r.id === finisher.id) + 1
+              : 0;
             const rowMarks =
               phase === "PAYOUT" ? (betMarks[result?.[i]?.id] ?? []) : [];
             const isSelected = rowMarks.length > 0;
@@ -140,6 +146,10 @@ export default function ResultPanel({
                 >
                   {rank}位:
                 </span>
+                {phase === "PAYOUT" && finisher && (
+                  <FrameNumber number={frameNo} size="small" />
+                )}
+                <HorseIcon />
                 <span
                   className={`${styles.finishName} ${styles[`finishName${rank}`] ?? ""}`}
                 >

@@ -71,52 +71,33 @@
 
 .finishRank {
   display: inline-block;
-  font-weight: 700;
+  min-width: 2.4em; /* ← 追加: 幅を揃えて、右の枠番・馬マーク・馬名の位置を縦に揃える */
+  font-size: 22px; /* ← 追加: 全員同じ大きさ(今の 16px より大きく) */
+  color: var(--text); /* ← 追加: 4位以降の色はここで決める */
+  font-weight: 500;
   letter-spacing: 0.2px;
 }
 
 .finishName {
   color: var(--text);
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 22px;
+  font-weight: 600;
+  padding-left: 0.5vw;
 }
 
 .finishRank1 {
   color: rgba(191, 141, 0, 1);
-  font-size: 22px;
-}
-
-.finishName1 {
-  color: var(--text);
-  font-size: 22px;
+  font-weight: 800;
 }
 
 .finishRank2 {
   color: rgba(122, 130, 146, 1);
-  font-size: 20px;
-}
-
-.finishName2 {
-  color: var(--text);
-  font-size: 20px;
+  font-weight: 700;
 }
 
 .finishRank3 {
   color: rgba(158, 92, 56, 1);
-  font-size: 18px;
-}
-
-.finishName3 {
-  color: var(--text);
-  font-size: 18px;
-}
-
-.finishRank4,
-.finishRank5,
-.finishRank6,
-.finishRank7 {
-  color: var(--text);
-  font-size: 16px;
+  font-weight: 600;
 }
 
 /* ----- 抽選演出 ----- */
@@ -151,7 +132,7 @@
 .plate {
   position: absolute;
   top: 6px;
-  left: 96px;
+  left: 128px;
   right: 8px;
   height: calc(var(--row-h) - 12px);
   box-sizing: border-box;

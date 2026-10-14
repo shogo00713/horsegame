@@ -3,6 +3,8 @@
  * 色は currentColor を使うので、親のcolorに追従する
  */
 
+import styles from "./Icon.module.css";
+
 const PATHS = {
   // チケット(BET)
   ticket: "M3 9a2 2 0 0 0 0 6v3h18v-3a2 2 0 0 1 0-6V6H3v3zM13 6v12",
@@ -53,4 +55,8 @@ export default function Icon({
       <path d={PATHS[name]} />
     </svg>
   );
+}
+
+export function HorseIcon() {
+  return <span className={styles.horse} aria-hidden="true" />;
 }

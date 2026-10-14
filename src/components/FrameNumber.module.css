@@ -9,6 +9,7 @@
   font-weight: 700;
   color: #fff;
   background: var(--muted);
+  padding-right: 0.2em;
 }
 
 .frame1 {
