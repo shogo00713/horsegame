@@ -14,10 +14,10 @@ import type { BetType, Runner, Condition } from "../types/game";
 export const RTP_BY_TYPE: Record<BetType, number> = {
   PLACE: 0.85,
   WIN: 0.9,
-  QUINELLA: 1.2,
-  EXACTA: 1.8,
-  TRIO: 1.8,
-  TRIFECTA: 4.5,
+  QUINELLA: 0.92,
+  EXACTA: 0.95,
+  TRIO: 0.95,
+  TRIFECTA: 0.98,
 };
 
 // 最低限のオッズ
