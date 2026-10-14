@@ -4,7 +4,7 @@ import {
   progressAt,
   DRAW_DURATION_MS,
   SETTLE_PROGRESS,
-} from "./drawAnimation";
+} from "./controlRaceAnimation";
 import type { Runner } from "../types/game";
 
 const mk = (id: string): Runner => ({ id, name: id, odds: 1 });

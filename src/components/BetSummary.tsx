@@ -5,7 +5,7 @@
  */
 
 import type { BetDraft } from "../types/game";
-import { betTypeLabel, formatSelectedRunners } from "../logic/betRules";
+import { betTypeLabel, formatSelectedRunners } from "../logic/checkBetRules";
 import styles from "./BetSummary.module.css";
 
 type BetSummaryProps = {

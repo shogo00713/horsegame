@@ -18,8 +18,8 @@ import styles from "./BetPanel.module.css";
 import BetSummary from "./BetSummary";
 import BetEditor from "./BetEditor";
 import Icon from "./Icon";
-import { isValidBet, buildBetSelection } from "../logic/betRules";
-import { calculateMaxPayout } from "../logic/payout";
+import { isValidBet, buildBetSelection } from "../logic/checkBetRules";
+import { calculateMaxPayout } from "../logic/calculatePayout";
 
 // 親コンポーネントから渡されるprops
 type BetPanelProps = {

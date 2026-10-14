@@ -4,8 +4,8 @@ import {
   dealConditions,
   isValidConditions,
   applyCondition,
-} from "./condition";
-import { makeFinishOrder } from "./race";
+} from "./updateHorseCondition";
+import { makeFinishOrder } from "./determineRaceResults";
 import { runners } from "../data/runners";
 import type { Condition } from "../types/game";
 

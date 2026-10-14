@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { makeFinishOrder, pickWinnerByOdds } from "./race";
+import { makeFinishOrder, pickWinnerByOdds } from "./determineRaceResults";
 import type { Runner } from "../types/game";
 
 const runners: Runner[] = [

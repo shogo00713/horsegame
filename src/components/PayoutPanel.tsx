@@ -9,7 +9,7 @@
  */
 
 import type { BetResult } from "../types/game";
-import { betTypeLabel, formatSelectedRunners } from "../logic/betRules";
+import { betTypeLabel, formatSelectedRunners } from "../logic/checkBetRules";
 import styles from "./PayoutPanel.module.css";
 
 const acceptButtonText = (payout: number) => {

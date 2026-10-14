@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { horseStats } from "./history";
+import { horseStats } from "./calculateHorseStats";
 import type { RaceHistory, Runner } from "../types/game";
 
 const a: Runner = { id: "a", name: "A", odds: 1.5 };

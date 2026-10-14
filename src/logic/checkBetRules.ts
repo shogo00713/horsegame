@@ -1,5 +1,5 @@
 /**
- * 賭け方に応じて、判定が変わる部分をまとめた関数たち
+ * 賭け方に応じて、正しい選択をしているのかを判定する関数たち
  *
  * 賭け方に応じて、選ぶ必要のある馬の頭数や、着順を当てる必要があるかどうかなどが変わる
  * それらを賭け方を引数として判定する関数がまとめてある
@@ -61,9 +61,9 @@ export function isOrderedBetType(betType: BetType): boolean {
 }
 
 /**
- * ベット金額の合計を計算する関数
+ * ベットの合計金額を計算する関数
  *
- * @param bets 各賭けの配列
+ * @param bets 各ベットの配列
  * @returns 整数
  */
 export function totalBetAmount(bets: BetDraft[]): number {
@@ -77,7 +77,7 @@ export function totalBetAmount(bets: BetDraft[]): number {
  * うまく構成できなかったら null を返す
  *
  * @param betType 賭け方
- * @param runners 選択済みの馬
+ * @param runners 選択済みの馬 (先頭から順番に着順も持つ)
  * @returns BetSelection (払い戻し計算用のベット情報(ベットの種類と選んだ馬を含む))
  */
 export function buildBetSelection(
@@ -102,11 +102,13 @@ export function buildBetSelection(
 }
 
 /**
- * 各ベットが正しいかどうかを判定する関数
+ * 構成中の各ベットが正当なものかどうかを判定する関数
  *
- * 金額が正の整数で、選んだ馬の数が賭け方に応じて正しいかどうかを判定する
+ * 次の条件をすべて満たす場合に True を返す
+ * * 金額が正の整数であること
+ * * 選んだ馬の数が賭け方に応じて正しいこと
  *
- * @param bet
+ * @param bet 賭け方と選択済みの馬
  * @returns boolean
  */
 export function isValidBet(bet: BetDraft): boolean {

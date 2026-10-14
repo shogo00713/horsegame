@@ -7,7 +7,7 @@
 
 import { useState } from "react";
 import type { RaceHistory, Runner, HorseStats } from "../types/game";
-import { horseStats } from "../logic/history";
+import { horseStats } from "../logic/calculateHorseStats";
 import FrameNumber from "./FrameNumber";
 import styles from "./HistoryModal.module.css";
 

@@ -1,8 +1,8 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { useHorseGame } from "./useHorseGame";
-import { MAX_HISTORY } from "../logic/history";
-import { DRAW_DURATION_MS } from "../logic/drawAnimation";
+import { MAX_HISTORY } from "../logic/calculateHorseStats";
+import { DRAW_DURATION_MS } from "../logic/controlRaceAnimation";
 import type { Runner } from "../types/game";
 import type { RaceHistory } from "../types/game";
 

@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { calculatePayout, calculateMaxPayout } from "./payout";
-import { hitProbability, payoutMultiplier, RTP_BY_TYPE } from "./odds";
+import { calculatePayout, calculateMaxPayout } from "./calculatePayout";
+import { hitProbability, payoutMultiplier, RTP_BY_TYPE } from "./calculateOdds";
 import { runners as field } from "../data/runners";
 import type { BetType, Runner } from "../types/game";
 

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { DRAW_DURATION_MS } from "../logic/drawAnimation";
+import { DRAW_DURATION_MS } from "../logic/controlRaceAnimation";
 import ResultPanel from "./ResultPanel";
 import type { Runner } from "../types/game";
 

@@ -13,7 +13,7 @@ import {
   createRaceScript,
   progressAt,
   SETTLE_PROGRESS,
-} from "../logic/drawAnimation";
+} from "../logic/controlRaceAnimation";
 import EntryList from "./EntryList";
 import styles from "./ResultPanel.module.css";
 

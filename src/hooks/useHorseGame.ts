@@ -16,18 +16,18 @@ import type {
   BetResult,
   Conditions,
 } from "../types/game";
-import { makeFinishOrder } from "../logic/race";
-import { calculatePayout } from "../logic/payout";
-import { MAX_HISTORY } from "../logic/history";
-import { DRAW_DURATION_MS } from "../logic/drawAnimation";
-import { dealConditions, isValidConditions } from "../logic/condition";
+import { makeFinishOrder } from "../logic/determineRaceResults";
+import { calculatePayout } from "../logic/calculatePayout";
+import { MAX_HISTORY } from "../logic/calculateHorseStats";
+import { DRAW_DURATION_MS } from "../logic/controlRaceAnimation";
+import { dealConditions, isValidConditions } from "../logic/updateHorseCondition";
 import {
   maxSelectable,
   buildBetSelection,
   canResetMoney,
   totalBetAmount,
   validateBetRules,
-} from "../logic/betRules";
+} from "../logic/checkBetRules";
 
 // 最大のベット件数
 const MAX_BETS = 5;

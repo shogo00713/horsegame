@@ -6,7 +6,7 @@
  */
 
 import { Runner, Conditions } from "../types/game";
-import { applyCondition, NORMAL_CONDITION } from "./condition";
+import { applyCondition, NORMAL_CONDITION } from "./updateHorseCondition";
 
 /**
  * ランダムに1頭の馬を選ぶ関数

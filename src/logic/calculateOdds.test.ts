@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { marginalWinProbabilities, deriveOdds, RTP_BY_TYPE } from "./odds";
+import { marginalWinProbabilities, deriveOdds, RTP_BY_TYPE } from "./calculateOdds";
 import { runners } from "../data/runners";
-import { makeFinishOrder } from "./race";
-import { dealConditions } from "./condition";
+import { makeFinishOrder } from "./determineRaceResults";
+import { dealConditions } from "./updateHorseCondition";
 
 const strengths = runners.map((r) => r.strength!);
 

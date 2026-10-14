@@ -6,7 +6,7 @@
  */
 
 import type { Runner } from "../types/game";
-import { deriveOdds, RTP_BY_TYPE } from "../logic/odds";
+import { deriveOdds, RTP_BY_TYPE } from "../logic/calculateOdds";
 
 // 強さの差の付き方。1より小さいほど差が縮まり、大穴が来やすくなる
 const STRENGTH_EXPONENT = 0.7;

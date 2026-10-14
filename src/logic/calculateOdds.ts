@@ -1,16 +1,16 @@
 /**
- * オッズを的中確率から決定する関数たち
+ * 各馬・各賭け方のオッズを的中確率から決定する関数たち
  *
  * オッズは的中確率と払い戻し率から決定される
  * 単勝のオッズは、オッズそのものとして広く活用される
  * それ以外の賭け方のオッズは、必要となる時のみ計算される
  */
 
-import { applyCondition, DECK_RATIO, NORMAL_CONDITION } from "./condition";
+import { applyCondition, DECK_RATIO, NORMAL_CONDITION } from "./updateHorseCondition";
 import type { BetType, Runner, Condition } from "../types/game";
 
 // 券種ごとの払い戻し率(調子が分からない人が、平均して戻る割合)
-// 本来1以上はあまり設定しないが、面白さのために極めて高い値を入れている
+// 本来1以上はあまり設定しないが、面白さのために極めて高い値も入れている
 export const RTP_BY_TYPE: Record<BetType, number> = {
   PLACE: 0.85,
   WIN: 0.9,

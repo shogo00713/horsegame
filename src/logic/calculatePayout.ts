@@ -15,7 +15,7 @@
  */
 
 import { BetSelection, Runner } from "../types/game";
-import { payoutMultiplier } from "./odds";
+import { payoutMultiplier } from "./calculateOdds";
 
 /**
  * オッズの総合的な計算関数

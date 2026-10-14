@@ -7,7 +7,7 @@ import {
   isValidBet,
   totalBetAmount,
   validateBetRules,
-} from "./betRules";
+} from "./checkBetRules";
 import type { Runner, BetDraft } from "../types/game";
 
 const phoenix: Runner = { id: "phoenix", name: "フェニックス", odds: 1.2 };
