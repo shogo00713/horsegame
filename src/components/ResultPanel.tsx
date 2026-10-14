@@ -27,30 +27,6 @@ type ResultPanelProps = {
   onSkip: () => void;
 };
 
-// phaseに応じて表示するメッセージを返す
-function phaseMessage(phase: Phase): string {
-  switch (phase) {
-    case "BETTING":
-      return "ベット受付中";
-    case "DRAWING":
-      return "抽選中";
-    case "PAYOUT":
-      return "払い戻し中";
-  }
-}
-
-// phaseに応じた、遊び方の短い説明を返す
-function phaseGuide(phase: Phase): string {
-  switch (phase) {
-    case "BETTING":
-      return "右のBETパネルで賭けを決めて「BETする」を押すと、レースがスタート！";
-    case "DRAWING":
-      return "レース中…結果が出るまで固唾をのんで見守ろう！";
-    case "PAYOUT":
-      return "結果発表！当たったベットは右で払い戻しを受け取ろう。";
-  }
-}
-
 // BET1〜BETnの印を、番号ごとに決まった列へ並べる(縦に見て、どのBETか分かるように)
 // 選んでいないBETの列は、空のまま幅だけ確保する
 function BetMarkSlots({
@@ -111,16 +87,6 @@ export default function ResultPanel({
 
   return (
     <div className={styles.resultPanel}>
-      <div className={styles.header}>
-        <div className={styles.mainTitle}>RACE</div>
-        <div className={styles.phaseMessage}>現在 : {phaseMessage(phase)}</div>
-        <p className={styles.guide}>{phaseGuide(phase)}</p>
-      </div>
-
-      <div className={styles.sectionTitle}>
-        {isBetting ? "出走馬一覧" : "着順"}
-      </div>
-
       {isBetting && <EntryList runners={runners} lastResult={result} />}
 
       {isDrawing && (

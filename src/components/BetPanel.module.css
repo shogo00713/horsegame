@@ -1,7 +1,6 @@
 .betPanel {
   width: 100%;
   padding: 22px 0 0;
-  border-top: 1px solid var(--border);
   background: transparent;
 
   display: flex;
@@ -112,5 +111,26 @@
 @media (max-width: 600px) {
   .betPanel {
     padding: 16px 0 0;
+  }
+}
+
+/*
+2カラム表示(1101px以上)では、パネルの高さは画面の高さで決まる (App.module.css 参照)
+画面が低いほど、余白と大きな数字を小さくする
+*/
+@media (min-width: 1101px) {
+  .betPanel {
+    padding-top: clamp(10px, 2dvh, 22px);
+    gap: clamp(6px, 1.4dvh, 14px);
+  }
+
+  .row span:last-child {
+    font-size: clamp(26px, min(3.4vw, 4.6dvh), 46px);
+    line-height: 1.2;
+  }
+
+  .betPanelSubmitButton {
+    padding-block: clamp(10px, 1.8dvh, 18px);
+    line-height: 1.2;
   }
 }

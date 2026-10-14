@@ -1,7 +1,6 @@
 .resultPanel {
   width: 100%;
   padding: 22px 0 0;
-  border-top: 1px solid var(--border);
   background: transparent;
 
   display: grid;
@@ -248,5 +247,37 @@
 @media (max-width: 600px) {
   .resultPanel {
     padding: 16px 0 0;
+  }
+}
+
+/*
+2カラム表示(1101px以上)では、パネルの高さは画面の高さで決まる (App.module.css 参照)
+着順の枠は、残りの高さを8等分して使う
+ - --row-h (1行の高さ) を、枠全体の高さ(100cqh)から計算し直す
+ - プレート(演出)の位置は --row-h から計算しているので、これだけで枠とずれずに動く
+ - 100cqh は「一番近い container-type の祖先の高さ」。.finishLines 自身をその祖先にしている
+*/
+@media (min-width: 1101px) {
+  .resultPanel {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding-top: clamp(10px, 2dvh, 22px);
+  }
+
+  .finishLines {
+    flex: 1;
+    min-height: 0;
+    /* 画面が高すぎても、1行は64pxまで */
+    max-height: calc(8 * 64px + 7 * var(--row-gap));
+    container-type: size;
+    --row-h: calc((100cqh - 7 * var(--row-gap)) / 8);
+    grid-template-rows: repeat(8, minmax(0, 1fr));
+  }
+
+  .finishLine {
+    line-height: 1.2; /* 行が低くなっても、文字がはみ出さないようにする */
+    padding-block: 0;
   }
 }

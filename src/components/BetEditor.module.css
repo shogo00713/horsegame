@@ -151,3 +151,13 @@
 .confirmButton:hover {
   opacity: 0.92;
 }
+
+/*
+2カラム表示(1101px以上)では、パネルの高さは画面の高さで決まる (App.module.css 参照)
+馬のリストは中でスクロールできるので、最低限の高さを低くして、他の部分が収まるようにする
+*/
+@media (min-width: 1101px) {
+  .runnerList {
+    min-height: 120px;
+  }
+}

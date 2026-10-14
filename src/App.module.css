@@ -36,3 +36,30 @@
   display: flex;
   flex-direction: column;
 }
+
+/*
+左右のカードが並べられる幅(1101px以上)では、ブラウザの高さにぴったり収めて、縦スクロールを出さない
+ - .app の高さを画面の高さに固定し、.main が残りの高さを全部使う
+ - 中身の側(各パネル)は、その高さに合わせて伸び縮みするように作ってある
+ - 高さが min-height 未満の低い画面では、収めるのを諦めて縦スクロールにする
+*/
+@media (min-width: 1101px) {
+  .app {
+    height: 100vh; /* dvh に対応していないブラウザ用 */
+    height: 100dvh; /* スマホのアドレスバーを除いた「いま見えている高さ」 */
+    min-height: 640px;
+    padding-block: clamp(8px, 2.2dvh, 24px);
+  }
+
+  .main {
+    flex: 1; /* ヘッダーを除いた残りの高さを全部使う */
+    min-height: 0; /* 中身が大きくても、.main 自体は残りの高さより大きくならない */
+    grid-template-rows: minmax(0, 1fr); /* 行の高さも .main に合わせる */
+    margin: clamp(6px, 1.8dvh, 20px) auto clamp(6px, 2.4dvh, 32px);
+  }
+
+  .leftPanel,
+  .rightPanel {
+    min-height: 0;
+  }
+}

@@ -1,7 +1,6 @@
 .payoutPanel {
   width: 100%;
   padding: 22px 0 0;
-  border-top: 1px solid var(--border);
   background: transparent;
 
   display: flex;

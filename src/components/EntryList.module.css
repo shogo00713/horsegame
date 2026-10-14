@@ -1,6 +1,5 @@
 .list {
   display: grid;
-  border-top: 1px solid var(--border);
 }
 
 .head {
@@ -118,5 +117,35 @@
 
   .odds {
     font-size: 17px;
+  }
+}
+
+/*
+2カラム表示(1101px以上)では、残りの高さを8頭で等分する
+行の高さは「中身の高さ」を下回らない (flex-basis: 0 + min-height の初期値 auto)
+*/
+@media (min-width: 1101px) {
+  .list {
+    flex: 1;
+    min-height: 0;
+    max-height: 700px; /* 画面が高すぎても、間延びしすぎないようにする */
+    display: flex;
+    flex-direction: column;
+  }
+
+  .head {
+    flex: none;
+  }
+
+  .row {
+    flex: 1 1 0;
+    padding-block: 4px;
+  }
+}
+
+/* 高さが低いときは、馬の説明文を隠して1行を低くする */
+@media (min-width: 1101px) and (max-height: 760px) {
+  .description {
+    display: none;
   }
 }

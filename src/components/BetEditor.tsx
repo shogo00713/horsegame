@@ -63,9 +63,6 @@ export default function BetEditor({
         <span className={styles.title}>
           <Icon name="pencil" /> 馬券を作ろう
         </span>
-        <span className={styles.guide}>
-          ① 券種を選ぶ → ② 馬を選ぶ → ③ 金額を決めて「確定」！
-        </span>
       </div>
 
       <div className={styles.field}>
