@@ -23,7 +23,6 @@
   letter-spacing: 0.32em;
 }
 
-/* ----- 操作ボタン ----- */
 .actions {
   display: flex;
   align-items: center;
@@ -66,6 +65,7 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* 画面幅が狭い場合は、ヘッダーのボタンを下に回す*/
 @media (max-width: 900px) {
   .headerInner {
     flex-wrap: wrap;

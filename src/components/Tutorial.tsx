@@ -1,7 +1,8 @@
 /**
- * 初回に表示する、ゲームの流れの説明
+ * 初回に表示する、ゲームの流れの説明のモーダル
  *
- * ステップ式で「次へ」「戻る」。いつでも「スキップ」で閉じられる
+ * ステップ式で「次へ」「戻る」がある
+ * いつでも「スキップ」で閉じられる
  */
 
 import { useState } from "react";
@@ -21,7 +22,58 @@ export default function Tutorial({ onClose }: TutorialProps) {
   const isLast = index === GUIDE_STEPS.length - 1;
 
   return (
-    <Modal title="ようこそ！" onClose={onClose} width={560}>
+    <Modal
+      title="競馬ゲームへようこそ！"
+      onClose={onClose}
+      width={700}
+      footer={
+        <>
+          {/* 進行度合いを示すドット */}
+          <div
+            className={styles.dots}
+            aria-label={`${index + 1} / ${GUIDE_STEPS.length}`}
+          >
+            {GUIDE_STEPS.map((s, i) => (
+              <span
+                key={s.title}
+                className={i === index ? styles.dotActive : styles.dot}
+              />
+            ))}
+          </div>
+
+          {/* 「戻る」「次へ」「スキップ」「はじめる」ボタン */}
+          <div className={styles.footer}>
+            {isFirst ? (
+              <button type="button" className={styles.skip} onClick={onClose}>
+                スキップ
+              </button>
+            ) : (
+              <button type="button" onClick={() => setIndex(index - 1)}>
+                戻る
+              </button>
+            )}
+            {isLast ? (
+              <button
+                type="button"
+                className={styles.primary}
+                onClick={onClose}
+              >
+                <Icon name="check" />
+                はじめる
+              </button>
+            ) : (
+              <button
+                type="button"
+                className={styles.primary}
+                onClick={() => setIndex(index + 1)}
+              >
+                次へ
+              </button>
+            )}
+          </div>
+        </>
+      }
+    >
       <div className={styles.step}>
         <div className={styles.icon}>
           <Icon name={step.icon} size={32} />
@@ -45,43 +97,6 @@ export default function Tutorial({ onClose }: TutorialProps) {
               </div>
             ))}
           </dl>
-        )}
-      </div>
-
-      <div
-        className={styles.dots}
-        aria-label={`${index + 1} / ${GUIDE_STEPS.length}`}
-      >
-        {GUIDE_STEPS.map((s, i) => (
-          <span
-            key={s.title}
-            className={i === index ? styles.dotActive : styles.dot}
-          />
-        ))}
-      </div>
-
-      <div className={styles.footer}>
-        {isFirst ? (
-          <button type="button" className={styles.skip} onClick={onClose}>
-            スキップ
-          </button>
-        ) : (
-          <button type="button" onClick={() => setIndex(index - 1)}>
-            戻る
-          </button>
-        )}
-        {isLast ? (
-          <button type="button" className={styles.primary} onClick={onClose}>
-            <Icon name="check" /> はじめる
-          </button>
-        ) : (
-          <button
-            type="button"
-            className={styles.primary}
-            onClick={() => setIndex(index + 1)}
-          >
-            次へ
-          </button>
         )}
       </div>
     </Modal>

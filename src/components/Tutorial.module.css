@@ -3,8 +3,8 @@
   justify-items: center;
   gap: 10px;
   text-align: center;
-  min-height: 300px;
-  align-content: start;
+  align-content: center;
+  min-height: 100%; 
 }
 
 .icon {

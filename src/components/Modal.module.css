@@ -12,6 +12,7 @@
 .dialog {
   display: flex;
   flex-direction: column;
+  height: min(640px, 90dvh);
   width: 100%;
   max-height: 88vh;
   background: var(--bg-card);
@@ -42,6 +43,13 @@
 }
 
 .body {
+  flex: 1;
+  min-height: 0;
   padding: 8px 24px 24px;
   overflow-y: auto;
+}
+
+.footer {
+  flex-shrink: 0;
+  padding: 0 24px 24px;
 }

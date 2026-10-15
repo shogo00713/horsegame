@@ -1,6 +1,15 @@
+/**
+ * 全体のヘッダーを構成するコンポーネント
+ */
+
 import Icon from "./Icon";
 import styles from "./Header.module.css";
 
+/**
+ * - 所持金を表示する
+ * - メニューを開くボタン
+ * - 履歴を開くボタン
+ */
 type HeaderProps = {
   money: number;
   onOpenMenu: () => void;
