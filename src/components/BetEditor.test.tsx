@@ -49,15 +49,15 @@ describe("BetEditor - 券種", () => {
 });
 
 describe("BetEditor - 賭け金", () => {
-  it("定額ボタン(1,000円・5,000円・1万円)で金額を選べる", async () => {
+  it("定額ボタン(500円・5,000円・1万円)で金額を選べる", async () => {
     const props = renderEditor();
 
-    await userEvent.click(screen.getByRole("button", { name: "1,000円" }));
+    await userEvent.click(screen.getByRole("button", { name: "500円" }));
     await userEvent.click(screen.getByRole("button", { name: "5,000円" }));
     await userEvent.click(screen.getByRole("button", { name: "1万円" }));
 
     expect(props.onChangeBetAmount.mock.calls).toEqual([
-      ["1000"],
+      ["500"],
       ["5000"],
       ["10000"],
     ]);
@@ -79,7 +79,7 @@ describe("BetEditor - 賭け金", () => {
     expect(screen.getByRole("textbox", { name: "好きな額" })).toHaveValue(
       "300",
     );
-    ["1,000円", "5,000円", "1万円"].forEach((name) =>
+    ["500円", "5,000円", "1万円"].forEach((name) =>
       expect(screen.getByRole("button", { name })).toHaveAttribute(
         "aria-pressed",
         "false",
