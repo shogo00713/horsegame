@@ -3,7 +3,6 @@
  *
  * 普段は、最大件数ぶんの「固定スロット」を表示する(空きは＋、埋まっていれば簡易表示)。
  * スロットをクリックすると、パネルの中身がその場で編集画面(BetEditor)に差し替わる。
- * 画面全体を覆うモーダルにはしない(左側のレース画面を隠さないため)。
  */
 
 import { useState } from "react";
@@ -26,7 +25,7 @@ type BetPanelProps = {
   bets: BetDraft[];
   phase: Phase;
   runners: Runner[];
-  conditions?: Conditions; // デバッグ表示用(開発時のみ使う)
+  conditions?: Conditions; // デバッグ表示用(開発時のみ)
   maxBets: number;
   totalBetAmount: number;
   submitBlockReason: string | null; // 「BETする」を押せない理由(押してよければ null)
@@ -59,7 +58,7 @@ export default function BetPanel({
 
   const isNotBetting = phase !== "BETTING";
   const isSubmitDisabled = isNotBetting || submitBlockReason !== null;
-  // 押せない理由は、ベット受付中だけ見せる(抽選中は所持金が減っているため、理由として不適切)
+
   const submitHint = isNotBetting ? null : submitBlockReason;
   const editingBet = bets.find((b) => b.id === editingBetId) ?? null;
 
