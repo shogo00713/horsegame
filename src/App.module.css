@@ -54,7 +54,7 @@
 
   .main {
     flex: 1;
-    min-height: 0; 
+    min-height: 0;
     grid-template-rows: minmax(0, 1fr);
     margin: clamp(6px, 1.8dvh, 20px) auto clamp(6px, 2.4dvh, 32px);
   }

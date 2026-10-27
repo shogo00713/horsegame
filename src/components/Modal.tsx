@@ -24,7 +24,9 @@ export default function Modal({
 }: ModalProps) {
   useEffect(() => {
     // Escキーが押されるか見張る
-    const handleKeyDown = (e: KeyboardEvent) => { if (e.key === "Escape") onClose()};
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
     // モーダルを出している時は、見張り役を置く
     window.addEventListener("keydown", handleKeyDown);
     // モーダルを閉じたら、見張り役を外す
@@ -41,19 +43,19 @@ export default function Modal({
         style={{ maxWidth: width }}
         onClick={(e) => e.stopPropagation()}
       >
-      <header className={styles.header}>
-        <h2 className={styles.title}>{title}</h2>
-        <button
-          type="button"
-          className={styles.close}
-          onClick={onClose}
-          aria-label="閉じる"
-        >
-        ✕
-        </button>
-      </header>
-      <div className={styles.body}>{children}</div>
-      {footer && <footer className={styles.footer}>{footer}</footer>}
+        <header className={styles.header}>
+          <h2 className={styles.title}>{title}</h2>
+          <button
+            type="button"
+            className={styles.close}
+            onClick={onClose}
+            aria-label="閉じる"
+          >
+            ✕
+          </button>
+        </header>
+        <div className={styles.body}>{children}</div>
+        {footer && <footer className={styles.footer}>{footer}</footer>}
       </div>
     </div>
   );
