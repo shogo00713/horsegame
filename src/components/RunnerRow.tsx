@@ -22,6 +22,7 @@ export default function RunnerRow({
   onClick,
 }: RunnerRowProps) {
   return (
+    // ボタンの中に数字と文字を表示するようにしている
     <button
       type="button"
       className={
@@ -32,11 +33,11 @@ export default function RunnerRow({
       disabled={disabled}
       onClick={onClick}
     >
+      {frameNumber && <FrameNumber number={frameNumber} size="small" />}
+      <span className={styles.runnerName}>{runner.name}</span>
       {selectionBadge && (
         <span className={styles.runnerBadge}>{selectionBadge}</span>
       )}
-      {frameNumber && <FrameNumber number={frameNumber} size="small" />}
-      <span className={styles.runnerName}>{runner.name}</span>
       {debugLabel && <span className={styles.debugLabel}>{debugLabel}</span>}
       <span className={styles.runnerOdds}>{runner.odds.toFixed(1)}倍</span>
     </button>
